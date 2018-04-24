@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Fine Uploader Example - Record Plugin for Video.js</title>
+        <link href="video.js/dist/video-js.min.css" rel="stylesheet">
+        <link href="css/videojs.record.css" rel="stylesheet">
+
+        <style>
+        /* change player background color */
+        #myAudio {
+            background-color: #f3e9d2;
+        }
+        </style>
+    </head>
+
+    <body>
+        <audio id="myAudio" class="video-js vjs-default-skin"></audio>
+
+        <script src="video.js/dist/video.min.js"></script>
+        <script src="recordrtc/RecordRTC.js"></script>
+        <script src="webrtc-adapter/out/adapter.js"></script>
+        <script src="wavesurfer.js/dist/wavesurfer.min.js"></script>
+        <script src="wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js"></script>
+        <script src="videojs-wavesurfer/dist/videojs.wavesurfer.min.js"></script>
+
+        <script src="videojs.record.js"></script>
+
+        <script src="fine-uploader/fine-uploader/fine-uploader.js"></script>
+
+        <script>
+            var i= null;
+            // initialize Fine Uploader
+            var uploader = new qq.FineUploaderBasic({
+                debug: true,
+                multiple:false,
+
+                defaultName: "sound",
+                request: {
+                    endpoint: '../upload/endpoint.php'
+                },
+                validation: {
+                    allowedExtensions: ['mp3', 'ogg', 'oga', 'ogg','webm','mp4']
+                },
+                callbacks: {
+                    onDelete: function(id) {
+                        // ...
+                    },
+                    onDeleteComplete: function(id, xhr, isError) { }
+                        //...
+                    ,
+                    onComplete: function(id,name,response)
+                    {
+                        var fi= uploader.getFile(id);
+
+                        console.log(id);
+
+                         i = response["uuid"];
+                        var b = uploader.getFile(i);
+                        console.log(b);
+
+                        var oReq = new XMLHttpRequest();
+                        oReq.open("GET", "../upload/files/"+i+"/misc_data", true);
+                        oReq.responseType = "arraybuffer";
+
+                        oReq.onload = function(oEvent) {
+                            i = new Blob([oReq.response], {type: "audio/webm"});
+                            console.log(blob);
+                            // ...
+                        };
+
+                        oReq.send();
+
+
+                    }
+
+
+                }
+				
+            });
+            // setup videojs-record
+            var player = videojs('myAudio', {
+                controls: true,
+                width: 600,
+                height: 300,
+                plugins: {
+                    wavesurfer: {
+                        src: 'live',
+                        waveColor: '#114b5f',
+                        progressColor: 'black',
+                        debug: true,
+                        cursorWidth: 1,
+                        msDisplayMax: 20,
+                        hideScrollbar: true
+                    },
+                    record: {
+                        audio: true,
+                        video: false,
+                        maxLength: 20,
+                        debug: true
+                    }
+                }
+            }, function() {
+                // print version information at startup
+                videojs.log('Using video.js', videojs.VERSION,
+                    'with videojs-record', videojs.getPluginVersion('record'),
+                    '+ videojs-wavesurfer', videojs.getPluginVersion('wavesurfer'),
+                    'and recordrtc', RecordRTC.version);
+            });
+
+            // player error handling
+            player.on('deviceError', function() {
+                console.warn('device error:', player.deviceErrorCode);
+            });
+
+            player.on('error', function(error) {
+                console.log('error:', error);
+            });
+
+            // data is available
+            player.on('finishRecord', function() {
+                // the blob object contains the audio data
+                var audioFile = player.recordedData;
+
+                console.log('finished recording: ', audioFile);
+
+                // upload data to server
+                var filesList = [audioFile];
+                uploader.addFiles(audioFile);
+                var id= uploader._currentBatchId;
+
+                //var fi = uploader.getAll();
+
+                debug.log(uploader);
+            });
+
+
+
+
+        </script>
+
+    </body>
+</html>

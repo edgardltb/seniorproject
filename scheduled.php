@@ -16,7 +16,8 @@ $schedules= ScheduleQuery::create()->findByMentorId($mentorid);
 $students = CustomerQuery::create()->findByMen($mentorid);
 
 $customer= CustomerQuery::create()->findOneByCustomerId($mentorid);
-$customer->getQuestionss();
+
+
 
 
 
