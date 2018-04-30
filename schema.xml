@@ -2,12 +2,44 @@
 <database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="administrator" idMethod="native" phpName="Administrator">
     <column name="admin_id" phpName="AdminId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="user_info_id" phpName="UserInfoId" type="INTEGER" required="true"/>
+    <column name="info_id" phpName="InfoId" type="INTEGER" required="true"/>
+    <column name="username" phpName="Username" type="VARCHAR" size="45"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="45"/>
     <foreign-key foreignTable="user_info" name="fk_Administrator_user_info1" onDelete="CASCADE">
-      <reference local="user_info_id" foreign="user_id"/>
+      <reference local="info_id" foreign="user_id"/>
     </foreign-key>
     <index name="fk_Administrator_user_info1_idx">
-      <index-column name="user_info_id"/>
+      <index-column name="info_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="answered_questions" idMethod="native" phpName="AnsweredQuestions"  isCrossRef="true">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="Customer_id" phpName="CustomerId" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="Question_id" phpName="QuestionId" type="INTEGER" primaryKey="true" required="true"/>
+    <column name="Answer" phpName="Answer" type="LONGVARCHAR"/>
+    <column name="response" phpName="Response" type="LONGVARCHAR"/>
+    <column name="media_id" phpName="MediaId" type="INTEGER"/>
+    <column name="responded" phpName="Responded" type="BOOLEAN" size="1"/>
+    <foreign-key foreignTable="customer" name="Customer_id" onDelete="CASCADE">
+      <reference local="Customer_id" foreign="customer_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="questions" name="Question_id" onDelete="CASCADE">
+      <reference local="Question_id" foreign="question_id"/>
+    </foreign-key>
+    <foreign-key foreignTable="media" name="fk_Answered_Questions_Media1" onDelete="CASCADE">
+      <reference local="media_id" foreign="Media_id"/>
+    </foreign-key>
+    <index name="fk_Customer_has_Questions_Questions1_idx">
+      <index-column name="Question_id"/>
+    </index>
+    <index name="fk_Customer_has_Questions_Customer1_idx">
+      <index-column name="Customer_id"/>
+    </index>
+    <index name="fk_Answered_Questions_Media1_idx">
+      <index-column name="media_id"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -25,15 +57,17 @@
     <column name="customer_id" phpName="CustomerId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="men" phpName="Men" type="INTEGER"/>
     <column name="cat" phpName="Cat" type="INTEGER"/>
-    <column name="user_info_id" phpName="UserInfoId" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="category" name="fk_Customer_Category1">
+    <column name="info_id" phpName="InfoId" type="INTEGER" required="true"/>
+    <column name="username" phpName="Username" type="VARCHAR" size="45"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="45"/>
+    <foreign-key foreignTable="category" name="fk_Customer_Category1" onDelete="SET NULL">
       <reference local="cat" foreign="categorie_id"/>
     </foreign-key>
-    <foreign-key foreignTable="mentor" name="fk_Customer_Mentor1">
+    <foreign-key foreignTable="mentor" name="fk_Customer_Mentor1" onDelete="SET NULL">
       <reference local="men" foreign="mentor_id"/>
     </foreign-key>
-    <foreign-key foreignTable="user_info" name="fk_Customer_user_info1">
-      <reference local="user_info_id" foreign="user_id"/>
+    <foreign-key foreignTable="user_info" name="fk_Customer_user_info1" onDelete="CASCADE">
+      <reference local="info_id" foreign="user_id"/>
     </foreign-key>
     <index name="fk_Customer_Mentor1_idx">
       <index-column name="men"/>
@@ -42,26 +76,7 @@
       <index-column name="cat"/>
     </index>
     <index name="fk_Customer_user_info1_idx">
-      <index-column name="user_info_id"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="customer_has_questions" idMethod="native" phpName="CustomerHasQuestions" isCrossRef="true" >
-    <column name="Customer_id" phpName="CustomerId" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="Questions_id" phpName="QuestionsId" type="INTEGER" primaryKey="true" required="true"/>
-    <foreign-key foreignTable="customer" name="fk_Customer_has_Questions_Customer1">
-      <reference local="Customer_id" foreign="customer_id"/>
-    </foreign-key>
-    <foreign-key foreignTable="questions" name="fk_Customer_has_Questions_Questions1">
-      <reference local="Questions_id" foreign="question_id"/>
-    </foreign-key>
-    <index name="fk_Customer_has_Questions_Questions1_idx">
-      <index-column name="Questions_id"/>
-    </index>
-    <index name="fk_Customer_has_Questions_Customer1_idx">
-      <index-column name="Customer_id"/>
+      <index-column name="info_id"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
@@ -71,22 +86,17 @@
     <column name="Media_id" phpName="MediaId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="video" phpName="Video" type="BOOLEAN" size="1"/>
     <column name="link" phpName="Link" type="VARCHAR" size="255"/>
-    <column name="question_id" phpName="QuestionId" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="questions" name="fk_Media_Questions1">
-      <reference local="question_id" foreign="question_id"/>
-    </foreign-key>
-    <index name="fk_Media_Questions1_idx">
-      <index-column name="question_id"/>
-    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
   <table name="mentor" idMethod="native" phpName="Mentor">
     <column name="mentor_id" phpName="MentorId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="categorie" phpName="Categorie" type="INTEGER" required="true"/>
+    <column name="categorie" phpName="Categorie" type="INTEGER"/>
     <column name="info" phpName="Info" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="category" name="fk_Mentor_Category1">
+    <column name="username" phpName="Username" type="VARCHAR" size="45"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="45"/>
+    <foreign-key foreignTable="category" name="fk_Mentor_Category1" onDelete="SET NULL">
       <reference local="categorie" foreign="categorie_id"/>
     </foreign-key>
     <foreign-key foreignTable="user_info" name="fk_Mentor_user_info1" onDelete="CASCADE">
@@ -105,9 +115,7 @@
   <table name="questions" idMethod="native" phpName="Questions">
     <column name="question_id" phpName="QuestionId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="question" phpName="Question" type="LONGVARCHAR"/>
-    <column name="response" phpName="Response" type="LONGVARCHAR"/>
     <column name="Category_id" phpName="CategoryId" type="INTEGER" required="true"/>
-    <column name="answered" phpName="Answered" type="BOOLEAN" size="1"/>
     <column name="datecreated" phpName="Datecreated" type="TIMESTAMP"/>
     <foreign-key foreignTable="category" name="fk_Questions_Category1" onDelete="CASCADE">
       <reference local="Category_id" foreign="categorie_id"/>
@@ -121,15 +129,15 @@
   </table>
   <table name="schedule" idMethod="native" phpName="Schedule">
     <column name="schedule_id" phpName="ScheduleId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="time" phpName="Time" type="TIMESTAMP"/>
-    <column name="datemade" phpName="Datemade" type="TIMESTAMP"/>
+    <column name="start_time" phpName="StartTime" type="TIMESTAMP" required="true"/>
+    <column name="end_time" phpName="EndTime" type="TIMESTAMP"/>
     <column name="Mentor_id" phpName="MentorId" type="INTEGER" primaryKey="true" required="true"/>
     <column name="Customer_id" phpName="CustomerId" type="INTEGER" primaryKey="true" required="true"/>
-    <column name="room" phpName="Room" type="INTEGER"/>
-    <foreign-key foreignTable="customer" name="fk_schedule_Customer1">
+    <column name="room" phpName="Room" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="customer" name="fk_schedule_Customer1" onDelete="CASCADE">
       <reference local="Customer_id" foreign="customer_id"/>
     </foreign-key>
-    <foreign-key foreignTable="mentor" name="fk_schedule_Mentor1">
+    <foreign-key foreignTable="mentor" name="fk_schedule_Mentor1" onDelete="CASCADE">
       <reference local="Mentor_id" foreign="mentor_id"/>
     </foreign-key>
     <index name="fk_schedule_Mentor1_idx">
@@ -138,18 +146,6 @@
     <index name="fk_schedule_Customer1_idx">
       <index-column name="Customer_id"/>
     </index>
-    <unique name="datemade_UNIQUE">
-      <unique-column name="datemade"/>
-    </unique>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
-  <table name="user" idMethod="native" phpName="User">
-    <column name="username" phpName="Username" type="VARCHAR" size="16" required="true"/>
-    <column name="email" phpName="Email" type="VARCHAR" size="255"/>
-    <column name="password" phpName="Password" type="VARCHAR" size="32" required="true"/>
-    <column name="create_time" phpName="CreateTime" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
@@ -164,8 +160,6 @@
     <column name="zipcode" phpName="Zipcode" type="VARCHAR" size="45"/>
     <column name="user_id" phpName="UserId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="email" phpName="Email" type="VARCHAR" size="45"/>
-    <column name="username" phpName="Username" type="VARCHAR" size="45"/>
-    <column name="password" phpName="Password" type="VARCHAR" size="45"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>

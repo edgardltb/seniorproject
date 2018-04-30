@@ -59,7 +59,7 @@ class CustomerTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class CustomerTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the customer_id field
@@ -87,9 +87,19 @@ class CustomerTableMap extends TableMap
     const COL_CAT = 'customer.cat';
 
     /**
-     * the column name for the user_info_id field
+     * the column name for the info_id field
      */
-    const COL_USER_INFO_ID = 'customer.user_info_id';
+    const COL_INFO_ID = 'customer.info_id';
+
+    /**
+     * the column name for the username field
+     */
+    const COL_USERNAME = 'customer.username';
+
+    /**
+     * the column name for the password field
+     */
+    const COL_PASSWORD = 'customer.password';
 
     /**
      * The default string format for model objects of the related table
@@ -103,11 +113,11 @@ class CustomerTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('CustomerId', 'Men', 'Cat', 'UserInfoId', ),
-        self::TYPE_CAMELNAME     => array('customerId', 'men', 'cat', 'userInfoId', ),
-        self::TYPE_COLNAME       => array(CustomerTableMap::COL_CUSTOMER_ID, CustomerTableMap::COL_MEN, CustomerTableMap::COL_CAT, CustomerTableMap::COL_USER_INFO_ID, ),
-        self::TYPE_FIELDNAME     => array('customer_id', 'men', 'cat', 'user_info_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('CustomerId', 'Men', 'Cat', 'InfoId', 'Username', 'Password', ),
+        self::TYPE_CAMELNAME     => array('customerId', 'men', 'cat', 'infoId', 'username', 'password', ),
+        self::TYPE_COLNAME       => array(CustomerTableMap::COL_CUSTOMER_ID, CustomerTableMap::COL_MEN, CustomerTableMap::COL_CAT, CustomerTableMap::COL_INFO_ID, CustomerTableMap::COL_USERNAME, CustomerTableMap::COL_PASSWORD, ),
+        self::TYPE_FIELDNAME     => array('customer_id', 'men', 'cat', 'info_id', 'username', 'password', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -117,11 +127,11 @@ class CustomerTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('CustomerId' => 0, 'Men' => 1, 'Cat' => 2, 'UserInfoId' => 3, ),
-        self::TYPE_CAMELNAME     => array('customerId' => 0, 'men' => 1, 'cat' => 2, 'userInfoId' => 3, ),
-        self::TYPE_COLNAME       => array(CustomerTableMap::COL_CUSTOMER_ID => 0, CustomerTableMap::COL_MEN => 1, CustomerTableMap::COL_CAT => 2, CustomerTableMap::COL_USER_INFO_ID => 3, ),
-        self::TYPE_FIELDNAME     => array('customer_id' => 0, 'men' => 1, 'cat' => 2, 'user_info_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('CustomerId' => 0, 'Men' => 1, 'Cat' => 2, 'InfoId' => 3, 'Username' => 4, 'Password' => 5, ),
+        self::TYPE_CAMELNAME     => array('customerId' => 0, 'men' => 1, 'cat' => 2, 'infoId' => 3, 'username' => 4, 'password' => 5, ),
+        self::TYPE_COLNAME       => array(CustomerTableMap::COL_CUSTOMER_ID => 0, CustomerTableMap::COL_MEN => 1, CustomerTableMap::COL_CAT => 2, CustomerTableMap::COL_INFO_ID => 3, CustomerTableMap::COL_USERNAME => 4, CustomerTableMap::COL_PASSWORD => 5, ),
+        self::TYPE_FIELDNAME     => array('customer_id' => 0, 'men' => 1, 'cat' => 2, 'info_id' => 3, 'username' => 4, 'password' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -144,7 +154,9 @@ class CustomerTableMap extends TableMap
         $this->addPrimaryKey('customer_id', 'CustomerId', 'INTEGER', true, null, null);
         $this->addForeignKey('men', 'Men', 'INTEGER', 'mentor', 'mentor_id', false, null, null);
         $this->addForeignKey('cat', 'Cat', 'INTEGER', 'category', 'categorie_id', false, null, null);
-        $this->addForeignKey('user_info_id', 'UserInfoId', 'INTEGER', 'user_info', 'user_id', true, null, null);
+        $this->addForeignKey('info_id', 'InfoId', 'INTEGER', 'user_info', 'user_id', true, null, null);
+        $this->addColumn('username', 'Username', 'VARCHAR', false, 45, null);
+        $this->addColumn('password', 'Password', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -158,37 +170,46 @@ class CustomerTableMap extends TableMap
     0 => ':cat',
     1 => ':categorie_id',
   ),
-), null, null, null, false);
+), 'SET NULL', null, null, false);
         $this->addRelation('Mentor', '\\Mentor', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':men',
     1 => ':mentor_id',
   ),
-), null, null, null, false);
+), 'SET NULL', null, null, false);
         $this->addRelation('UserInfo', '\\UserInfo', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_info_id',
+    0 => ':info_id',
     1 => ':user_id',
   ),
-), null, null, null, false);
-        $this->addRelation('CustomerHasQuestions', '\\CustomerHasQuestions', RelationMap::ONE_TO_MANY, array (
+), 'CASCADE', null, null, false);
+        $this->addRelation('AnsweredQuestions', '\\AnsweredQuestions', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Customer_id',
     1 => ':customer_id',
   ),
-), null, null, 'CustomerHasQuestionss', false);
+), 'CASCADE', null, 'AnsweredQuestionss', false);
         $this->addRelation('Schedule', '\\Schedule', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Customer_id',
     1 => ':customer_id',
   ),
-), null, null, 'Schedules', false);
-        $this->addRelation('Questions', '\\Questions', RelationMap::MANY_TO_MANY, array(), null, null, 'Questionss');
+), 'CASCADE', null, 'Schedules', false);
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to customer     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        AnsweredQuestionsTableMap::clearInstancePool();
+        ScheduleTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -334,12 +355,16 @@ class CustomerTableMap extends TableMap
             $criteria->addSelectColumn(CustomerTableMap::COL_CUSTOMER_ID);
             $criteria->addSelectColumn(CustomerTableMap::COL_MEN);
             $criteria->addSelectColumn(CustomerTableMap::COL_CAT);
-            $criteria->addSelectColumn(CustomerTableMap::COL_USER_INFO_ID);
+            $criteria->addSelectColumn(CustomerTableMap::COL_INFO_ID);
+            $criteria->addSelectColumn(CustomerTableMap::COL_USERNAME);
+            $criteria->addSelectColumn(CustomerTableMap::COL_PASSWORD);
         } else {
             $criteria->addSelectColumn($alias . '.customer_id');
             $criteria->addSelectColumn($alias . '.men');
             $criteria->addSelectColumn($alias . '.cat');
-            $criteria->addSelectColumn($alias . '.user_info_id');
+            $criteria->addSelectColumn($alias . '.info_id');
+            $criteria->addSelectColumn($alias . '.username');
+            $criteria->addSelectColumn($alias . '.password');
         }
     }
 

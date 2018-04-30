@@ -29,8 +29,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserInfoQuery orderByZipcode($order = Criteria::ASC) Order by the zipcode column
  * @method     ChildUserInfoQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildUserInfoQuery orderByEmail($order = Criteria::ASC) Order by the email column
- * @method     ChildUserInfoQuery orderByUsername($order = Criteria::ASC) Order by the username column
- * @method     ChildUserInfoQuery orderByPassword($order = Criteria::ASC) Order by the password column
  *
  * @method     ChildUserInfoQuery groupByFirstName() Group by the first_name column
  * @method     ChildUserInfoQuery groupByLastName() Group by the last_name column
@@ -41,8 +39,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserInfoQuery groupByZipcode() Group by the zipcode column
  * @method     ChildUserInfoQuery groupByUserId() Group by the user_id column
  * @method     ChildUserInfoQuery groupByEmail() Group by the email column
- * @method     ChildUserInfoQuery groupByUsername() Group by the username column
- * @method     ChildUserInfoQuery groupByPassword() Group by the password column
  *
  * @method     ChildUserInfoQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildUserInfoQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -95,9 +91,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserInfo findOneByCity(string $city) Return the first ChildUserInfo filtered by the city column
  * @method     ChildUserInfo findOneByZipcode(string $zipcode) Return the first ChildUserInfo filtered by the zipcode column
  * @method     ChildUserInfo findOneByUserId(int $user_id) Return the first ChildUserInfo filtered by the user_id column
- * @method     ChildUserInfo findOneByEmail(string $email) Return the first ChildUserInfo filtered by the email column
- * @method     ChildUserInfo findOneByUsername(string $username) Return the first ChildUserInfo filtered by the username column
- * @method     ChildUserInfo findOneByPassword(string $password) Return the first ChildUserInfo filtered by the password column *
+ * @method     ChildUserInfo findOneByEmail(string $email) Return the first ChildUserInfo filtered by the email column *
 
  * @method     ChildUserInfo requirePk($key, ConnectionInterface $con = null) Return the ChildUserInfo by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUserInfo requireOne(ConnectionInterface $con = null) Return the first ChildUserInfo matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -111,8 +105,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserInfo requireOneByZipcode(string $zipcode) Return the first ChildUserInfo filtered by the zipcode column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUserInfo requireOneByUserId(int $user_id) Return the first ChildUserInfo filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUserInfo requireOneByEmail(string $email) Return the first ChildUserInfo filtered by the email column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserInfo requireOneByUsername(string $username) Return the first ChildUserInfo filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserInfo requireOneByPassword(string $password) Return the first ChildUserInfo filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildUserInfo[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUserInfo objects based on current ModelCriteria
  * @method     ChildUserInfo[]|ObjectCollection findByFirstName(string $first_name) Return ChildUserInfo objects filtered by the first_name column
@@ -124,8 +116,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserInfo[]|ObjectCollection findByZipcode(string $zipcode) Return ChildUserInfo objects filtered by the zipcode column
  * @method     ChildUserInfo[]|ObjectCollection findByUserId(int $user_id) Return ChildUserInfo objects filtered by the user_id column
  * @method     ChildUserInfo[]|ObjectCollection findByEmail(string $email) Return ChildUserInfo objects filtered by the email column
- * @method     ChildUserInfo[]|ObjectCollection findByUsername(string $username) Return ChildUserInfo objects filtered by the username column
- * @method     ChildUserInfo[]|ObjectCollection findByPassword(string $password) Return ChildUserInfo objects filtered by the password column
  * @method     ChildUserInfo[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -224,7 +214,7 @@ abstract class UserInfoQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT first_name, last_name, phonenum, address, state, city, zipcode, user_id, email, username, password FROM user_info WHERE user_id = :p0';
+        $sql = 'SELECT first_name, last_name, phonenum, address, state, city, zipcode, user_id, email FROM user_info WHERE user_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -556,56 +546,6 @@ abstract class UserInfoQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the username column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
-     * $query->filterByUsername('%fooValue%', Criteria::LIKE); // WHERE username LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $username The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserInfoQuery The current query, for fluid interface
-     */
-    public function filterByUsername($username = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($username)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(UserInfoTableMap::COL_USERNAME, $username, $comparison);
-    }
-
-    /**
-     * Filter the query on the password column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByPassword('fooValue');   // WHERE password = 'fooValue'
-     * $query->filterByPassword('%fooValue%', Criteria::LIKE); // WHERE password LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $password The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildUserInfoQuery The current query, for fluid interface
-     */
-    public function filterByPassword($password = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($password)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(UserInfoTableMap::COL_PASSWORD, $password, $comparison);
-    }
-
-    /**
      * Filter the query by a related \Administrator object
      *
      * @param \Administrator|ObjectCollection $administrator the related object to use as filter
@@ -617,7 +557,7 @@ abstract class UserInfoQuery extends ModelCriteria
     {
         if ($administrator instanceof \Administrator) {
             return $this
-                ->addUsingAlias(UserInfoTableMap::COL_USER_ID, $administrator->getUserInfoId(), $comparison);
+                ->addUsingAlias(UserInfoTableMap::COL_USER_ID, $administrator->getInfoId(), $comparison);
         } elseif ($administrator instanceof ObjectCollection) {
             return $this
                 ->useAdministratorQuery()
@@ -690,7 +630,7 @@ abstract class UserInfoQuery extends ModelCriteria
     {
         if ($customer instanceof \Customer) {
             return $this
-                ->addUsingAlias(UserInfoTableMap::COL_USER_ID, $customer->getUserInfoId(), $comparison);
+                ->addUsingAlias(UserInfoTableMap::COL_USER_ID, $customer->getInfoId(), $comparison);
         } elseif ($customer instanceof ObjectCollection) {
             return $this
                 ->useCustomerQuery()

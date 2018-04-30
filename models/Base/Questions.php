@@ -2,21 +2,16 @@
 
 namespace Base;
 
+use \AnsweredQuestions as ChildAnsweredQuestions;
+use \AnsweredQuestionsQuery as ChildAnsweredQuestionsQuery;
 use \Category as ChildCategory;
 use \CategoryQuery as ChildCategoryQuery;
-use \Customer as ChildCustomer;
-use \CustomerHasQuestions as ChildCustomerHasQuestions;
-use \CustomerHasQuestionsQuery as ChildCustomerHasQuestionsQuery;
-use \CustomerQuery as ChildCustomerQuery;
-use \Media as ChildMedia;
-use \MediaQuery as ChildMediaQuery;
 use \Questions as ChildQuestions;
 use \QuestionsQuery as ChildQuestionsQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
-use Map\CustomerHasQuestionsTableMap;
-use Map\MediaTableMap;
+use Map\AnsweredQuestionsTableMap;
 use Map\QuestionsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -88,25 +83,11 @@ abstract class Questions implements ActiveRecordInterface
     protected $question;
 
     /**
-     * The value for the response field.
-     *
-     * @var        string
-     */
-    protected $response;
-
-    /**
      * The value for the category_id field.
      *
      * @var        int
      */
     protected $category_id;
-
-    /**
-     * The value for the answered field.
-     *
-     * @var        boolean
-     */
-    protected $answered;
 
     /**
      * The value for the datecreated field.
@@ -121,26 +102,10 @@ abstract class Questions implements ActiveRecordInterface
     protected $aCategory;
 
     /**
-     * @var        ObjectCollection|ChildCustomerHasQuestions[] Collection to store aggregation of ChildCustomerHasQuestions objects.
+     * @var        ObjectCollection|ChildAnsweredQuestions[] Collection to store aggregation of ChildAnsweredQuestions objects.
      */
-    protected $collCustomerHasQuestionss;
-    protected $collCustomerHasQuestionssPartial;
-
-    /**
-     * @var        ObjectCollection|ChildMedia[] Collection to store aggregation of ChildMedia objects.
-     */
-    protected $collMedias;
-    protected $collMediasPartial;
-
-    /**
-     * @var        ObjectCollection|ChildCustomer[] Cross Collection to store aggregation of ChildCustomer objects.
-     */
-    protected $collCustomers;
-
-    /**
-     * @var bool
-     */
-    protected $collCustomersPartial;
+    protected $collAnsweredQuestionss;
+    protected $collAnsweredQuestionssPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -152,21 +117,9 @@ abstract class Questions implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildCustomer[]
+     * @var ObjectCollection|ChildAnsweredQuestions[]
      */
-    protected $customersScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildCustomerHasQuestions[]
-     */
-    protected $customerHasQuestionssScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildMedia[]
-     */
-    protected $mediasScheduledForDeletion = null;
+    protected $answeredQuestionssScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Base\Questions object.
@@ -414,16 +367,6 @@ abstract class Questions implements ActiveRecordInterface
     }
 
     /**
-     * Get the [response] column value.
-     *
-     * @return string
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
      * Get the [category_id] column value.
      *
      * @return int
@@ -431,26 +374,6 @@ abstract class Questions implements ActiveRecordInterface
     public function getCategoryId()
     {
         return $this->category_id;
-    }
-
-    /**
-     * Get the [answered] column value.
-     *
-     * @return boolean
-     */
-    public function getAnswered()
-    {
-        return $this->answered;
-    }
-
-    /**
-     * Get the [answered] column value.
-     *
-     * @return boolean
-     */
-    public function isAnswered()
-    {
-        return $this->getAnswered();
     }
 
     /**
@@ -514,26 +437,6 @@ abstract class Questions implements ActiveRecordInterface
     } // setQuestion()
 
     /**
-     * Set the value of [response] column.
-     *
-     * @param string $v new value
-     * @return $this|\Questions The current object (for fluent API support)
-     */
-    public function setResponse($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->response !== $v) {
-            $this->response = $v;
-            $this->modifiedColumns[QuestionsTableMap::COL_RESPONSE] = true;
-        }
-
-        return $this;
-    } // setResponse()
-
-    /**
      * Set the value of [category_id] column.
      *
      * @param int $v new value
@@ -556,34 +459,6 @@ abstract class Questions implements ActiveRecordInterface
 
         return $this;
     } // setCategoryId()
-
-    /**
-     * Sets the value of the [answered] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     *
-     * @param  boolean|integer|string $v The new value
-     * @return $this|\Questions The current object (for fluent API support)
-     */
-    public function setAnswered($v)
-    {
-        if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
-        }
-
-        if ($this->answered !== $v) {
-            $this->answered = $v;
-            $this->modifiedColumns[QuestionsTableMap::COL_ANSWERED] = true;
-        }
-
-        return $this;
-    } // setAnswered()
 
     /**
      * Sets the value of [datecreated] column to a normalized version of the date/time value specified.
@@ -647,16 +522,10 @@ abstract class Questions implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : QuestionsTableMap::translateFieldName('Question', TableMap::TYPE_PHPNAME, $indexType)];
             $this->question = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionsTableMap::translateFieldName('Response', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->response = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionsTableMap::translateFieldName('CategoryId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionsTableMap::translateFieldName('CategoryId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->category_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionsTableMap::translateFieldName('Answered', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->answered = (null !== $col) ? (boolean) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionsTableMap::translateFieldName('Datecreated', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionsTableMap::translateFieldName('Datecreated', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -669,7 +538,7 @@ abstract class Questions implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = QuestionsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = QuestionsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Questions'), 0, $e);
@@ -734,11 +603,8 @@ abstract class Questions implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aCategory = null;
-            $this->collCustomerHasQuestionss = null;
+            $this->collAnsweredQuestionss = null;
 
-            $this->collMedias = null;
-
-            $this->collCustomers = null;
         } // if (deep)
     }
 
@@ -865,63 +731,17 @@ abstract class Questions implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->customersScheduledForDeletion !== null) {
-                if (!$this->customersScheduledForDeletion->isEmpty()) {
-                    $pks = array();
-                    foreach ($this->customersScheduledForDeletion as $entry) {
-                        $entryPk = [];
-
-                        $entryPk[1] = $this->getQuestionId();
-                        $entryPk[0] = $entry->getCustomerId();
-                        $pks[] = $entryPk;
-                    }
-
-                    \CustomerHasQuestionsQuery::create()
-                        ->filterByPrimaryKeys($pks)
+            if ($this->answeredQuestionssScheduledForDeletion !== null) {
+                if (!$this->answeredQuestionssScheduledForDeletion->isEmpty()) {
+                    \AnsweredQuestionsQuery::create()
+                        ->filterByPrimaryKeys($this->answeredQuestionssScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-
-                    $this->customersScheduledForDeletion = null;
-                }
-
-            }
-
-            if ($this->collCustomers) {
-                foreach ($this->collCustomers as $customer) {
-                    if (!$customer->isDeleted() && ($customer->isNew() || $customer->isModified())) {
-                        $customer->save($con);
-                    }
+                    $this->answeredQuestionssScheduledForDeletion = null;
                 }
             }
 
-
-            if ($this->customerHasQuestionssScheduledForDeletion !== null) {
-                if (!$this->customerHasQuestionssScheduledForDeletion->isEmpty()) {
-                    \CustomerHasQuestionsQuery::create()
-                        ->filterByPrimaryKeys($this->customerHasQuestionssScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->customerHasQuestionssScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collCustomerHasQuestionss !== null) {
-                foreach ($this->collCustomerHasQuestionss as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->mediasScheduledForDeletion !== null) {
-                if (!$this->mediasScheduledForDeletion->isEmpty()) {
-                    \MediaQuery::create()
-                        ->filterByPrimaryKeys($this->mediasScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->mediasScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collMedias !== null) {
-                foreach ($this->collMedias as $referrerFK) {
+            if ($this->collAnsweredQuestionss !== null) {
+                foreach ($this->collAnsweredQuestionss as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -960,14 +780,8 @@ abstract class Questions implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionsTableMap::COL_QUESTION)) {
             $modifiedColumns[':p' . $index++]  = 'question';
         }
-        if ($this->isColumnModified(QuestionsTableMap::COL_RESPONSE)) {
-            $modifiedColumns[':p' . $index++]  = 'response';
-        }
         if ($this->isColumnModified(QuestionsTableMap::COL_CATEGORY_ID)) {
             $modifiedColumns[':p' . $index++]  = 'Category_id';
-        }
-        if ($this->isColumnModified(QuestionsTableMap::COL_ANSWERED)) {
-            $modifiedColumns[':p' . $index++]  = 'answered';
         }
         if ($this->isColumnModified(QuestionsTableMap::COL_DATECREATED)) {
             $modifiedColumns[':p' . $index++]  = 'datecreated';
@@ -989,14 +803,8 @@ abstract class Questions implements ActiveRecordInterface
                     case 'question':
                         $stmt->bindValue($identifier, $this->question, PDO::PARAM_STR);
                         break;
-                    case 'response':
-                        $stmt->bindValue($identifier, $this->response, PDO::PARAM_STR);
-                        break;
                     case 'Category_id':
                         $stmt->bindValue($identifier, $this->category_id, PDO::PARAM_INT);
-                        break;
-                    case 'answered':
-                        $stmt->bindValue($identifier, (int) $this->answered, PDO::PARAM_INT);
                         break;
                     case 'datecreated':
                         $stmt->bindValue($identifier, $this->datecreated ? $this->datecreated->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1070,15 +878,9 @@ abstract class Questions implements ActiveRecordInterface
                 return $this->getQuestion();
                 break;
             case 2:
-                return $this->getResponse();
-                break;
-            case 3:
                 return $this->getCategoryId();
                 break;
-            case 4:
-                return $this->getAnswered();
-                break;
-            case 5:
+            case 3:
                 return $this->getDatecreated();
                 break;
             default:
@@ -1113,13 +915,11 @@ abstract class Questions implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getQuestionId(),
             $keys[1] => $this->getQuestion(),
-            $keys[2] => $this->getResponse(),
-            $keys[3] => $this->getCategoryId(),
-            $keys[4] => $this->getAnswered(),
-            $keys[5] => $this->getDatecreated(),
+            $keys[2] => $this->getCategoryId(),
+            $keys[3] => $this->getDatecreated(),
         );
-        if ($result[$keys[5]] instanceof \DateTimeInterface) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        if ($result[$keys[3]] instanceof \DateTimeInterface) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1143,35 +943,20 @@ abstract class Questions implements ActiveRecordInterface
 
                 $result[$key] = $this->aCategory->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->collCustomerHasQuestionss) {
+            if (null !== $this->collAnsweredQuestionss) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'customerHasQuestionss';
+                        $key = 'answeredQuestionss';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'customer_has_questionss';
+                        $key = 'answered_questionss';
                         break;
                     default:
-                        $key = 'CustomerHasQuestionss';
+                        $key = 'AnsweredQuestionss';
                 }
 
-                $result[$key] = $this->collCustomerHasQuestionss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collMedias) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'medias';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'medias';
-                        break;
-                    default:
-                        $key = 'Medias';
-                }
-
-                $result[$key] = $this->collMedias->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collAnsweredQuestionss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1214,15 +999,9 @@ abstract class Questions implements ActiveRecordInterface
                 $this->setQuestion($value);
                 break;
             case 2:
-                $this->setResponse($value);
-                break;
-            case 3:
                 $this->setCategoryId($value);
                 break;
-            case 4:
-                $this->setAnswered($value);
-                break;
-            case 5:
+            case 3:
                 $this->setDatecreated($value);
                 break;
         } // switch()
@@ -1258,16 +1037,10 @@ abstract class Questions implements ActiveRecordInterface
             $this->setQuestion($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setResponse($arr[$keys[2]]);
+            $this->setCategoryId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCategoryId($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setAnswered($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setDatecreated($arr[$keys[5]]);
+            $this->setDatecreated($arr[$keys[3]]);
         }
     }
 
@@ -1316,14 +1089,8 @@ abstract class Questions implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionsTableMap::COL_QUESTION)) {
             $criteria->add(QuestionsTableMap::COL_QUESTION, $this->question);
         }
-        if ($this->isColumnModified(QuestionsTableMap::COL_RESPONSE)) {
-            $criteria->add(QuestionsTableMap::COL_RESPONSE, $this->response);
-        }
         if ($this->isColumnModified(QuestionsTableMap::COL_CATEGORY_ID)) {
             $criteria->add(QuestionsTableMap::COL_CATEGORY_ID, $this->category_id);
-        }
-        if ($this->isColumnModified(QuestionsTableMap::COL_ANSWERED)) {
-            $criteria->add(QuestionsTableMap::COL_ANSWERED, $this->answered);
         }
         if ($this->isColumnModified(QuestionsTableMap::COL_DATECREATED)) {
             $criteria->add(QuestionsTableMap::COL_DATECREATED, $this->datecreated);
@@ -1415,9 +1182,7 @@ abstract class Questions implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setQuestion($this->getQuestion());
-        $copyObj->setResponse($this->getResponse());
         $copyObj->setCategoryId($this->getCategoryId());
-        $copyObj->setAnswered($this->getAnswered());
         $copyObj->setDatecreated($this->getDatecreated());
 
         if ($deepCopy) {
@@ -1425,15 +1190,9 @@ abstract class Questions implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getCustomerHasQuestionss() as $relObj) {
+            foreach ($this->getAnsweredQuestionss() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCustomerHasQuestions($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getMedias() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addMedia($relObj->copy($deepCopy));
+                    $copyObj->addAnsweredQuestions($relObj->copy($deepCopy));
                 }
             }
 
@@ -1529,42 +1288,38 @@ abstract class Questions implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('CustomerHasQuestions' == $relationName) {
-            $this->initCustomerHasQuestionss();
-            return;
-        }
-        if ('Media' == $relationName) {
-            $this->initMedias();
+        if ('AnsweredQuestions' == $relationName) {
+            $this->initAnsweredQuestionss();
             return;
         }
     }
 
     /**
-     * Clears out the collCustomerHasQuestionss collection
+     * Clears out the collAnsweredQuestionss collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addCustomerHasQuestionss()
+     * @see        addAnsweredQuestionss()
      */
-    public function clearCustomerHasQuestionss()
+    public function clearAnsweredQuestionss()
     {
-        $this->collCustomerHasQuestionss = null; // important to set this to NULL since that means it is uninitialized
+        $this->collAnsweredQuestionss = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collCustomerHasQuestionss collection loaded partially.
+     * Reset is the collAnsweredQuestionss collection loaded partially.
      */
-    public function resetPartialCustomerHasQuestionss($v = true)
+    public function resetPartialAnsweredQuestionss($v = true)
     {
-        $this->collCustomerHasQuestionssPartial = $v;
+        $this->collAnsweredQuestionssPartial = $v;
     }
 
     /**
-     * Initializes the collCustomerHasQuestionss collection.
+     * Initializes the collAnsweredQuestionss collection.
      *
-     * By default this just sets the collCustomerHasQuestionss collection to an empty array (like clearcollCustomerHasQuestionss());
+     * By default this just sets the collAnsweredQuestionss collection to an empty array (like clearcollAnsweredQuestionss());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1573,20 +1328,20 @@ abstract class Questions implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initCustomerHasQuestionss($overrideExisting = true)
+    public function initAnsweredQuestionss($overrideExisting = true)
     {
-        if (null !== $this->collCustomerHasQuestionss && !$overrideExisting) {
+        if (null !== $this->collAnsweredQuestionss && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = CustomerHasQuestionsTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = AnsweredQuestionsTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collCustomerHasQuestionss = new $collectionClassName;
-        $this->collCustomerHasQuestionss->setModel('\CustomerHasQuestions');
+        $this->collAnsweredQuestionss = new $collectionClassName;
+        $this->collAnsweredQuestionss->setModel('\AnsweredQuestions');
     }
 
     /**
-     * Gets an array of ChildCustomerHasQuestions objects which contain a foreign key that references this object.
+     * Gets an array of ChildAnsweredQuestions objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1596,111 +1351,111 @@ abstract class Questions implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildCustomerHasQuestions[] List of ChildCustomerHasQuestions objects
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
      * @throws PropelException
      */
-    public function getCustomerHasQuestionss(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getAnsweredQuestionss(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collCustomerHasQuestionssPartial && !$this->isNew();
-        if (null === $this->collCustomerHasQuestionss || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCustomerHasQuestionss) {
+        $partial = $this->collAnsweredQuestionssPartial && !$this->isNew();
+        if (null === $this->collAnsweredQuestionss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collAnsweredQuestionss) {
                 // return empty collection
-                $this->initCustomerHasQuestionss();
+                $this->initAnsweredQuestionss();
             } else {
-                $collCustomerHasQuestionss = ChildCustomerHasQuestionsQuery::create(null, $criteria)
+                $collAnsweredQuestionss = ChildAnsweredQuestionsQuery::create(null, $criteria)
                     ->filterByQuestions($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collCustomerHasQuestionssPartial && count($collCustomerHasQuestionss)) {
-                        $this->initCustomerHasQuestionss(false);
+                    if (false !== $this->collAnsweredQuestionssPartial && count($collAnsweredQuestionss)) {
+                        $this->initAnsweredQuestionss(false);
 
-                        foreach ($collCustomerHasQuestionss as $obj) {
-                            if (false == $this->collCustomerHasQuestionss->contains($obj)) {
-                                $this->collCustomerHasQuestionss->append($obj);
+                        foreach ($collAnsweredQuestionss as $obj) {
+                            if (false == $this->collAnsweredQuestionss->contains($obj)) {
+                                $this->collAnsweredQuestionss->append($obj);
                             }
                         }
 
-                        $this->collCustomerHasQuestionssPartial = true;
+                        $this->collAnsweredQuestionssPartial = true;
                     }
 
-                    return $collCustomerHasQuestionss;
+                    return $collAnsweredQuestionss;
                 }
 
-                if ($partial && $this->collCustomerHasQuestionss) {
-                    foreach ($this->collCustomerHasQuestionss as $obj) {
+                if ($partial && $this->collAnsweredQuestionss) {
+                    foreach ($this->collAnsweredQuestionss as $obj) {
                         if ($obj->isNew()) {
-                            $collCustomerHasQuestionss[] = $obj;
+                            $collAnsweredQuestionss[] = $obj;
                         }
                     }
                 }
 
-                $this->collCustomerHasQuestionss = $collCustomerHasQuestionss;
-                $this->collCustomerHasQuestionssPartial = false;
+                $this->collAnsweredQuestionss = $collAnsweredQuestionss;
+                $this->collAnsweredQuestionssPartial = false;
             }
         }
 
-        return $this->collCustomerHasQuestionss;
+        return $this->collAnsweredQuestionss;
     }
 
     /**
-     * Sets a collection of ChildCustomerHasQuestions objects related by a one-to-many relationship
+     * Sets a collection of ChildAnsweredQuestions objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $customerHasQuestionss A Propel collection.
+     * @param      Collection $answeredQuestionss A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildQuestions The current object (for fluent API support)
      */
-    public function setCustomerHasQuestionss(Collection $customerHasQuestionss, ConnectionInterface $con = null)
+    public function setAnsweredQuestionss(Collection $answeredQuestionss, ConnectionInterface $con = null)
     {
-        /** @var ChildCustomerHasQuestions[] $customerHasQuestionssToDelete */
-        $customerHasQuestionssToDelete = $this->getCustomerHasQuestionss(new Criteria(), $con)->diff($customerHasQuestionss);
+        /** @var ChildAnsweredQuestions[] $answeredQuestionssToDelete */
+        $answeredQuestionssToDelete = $this->getAnsweredQuestionss(new Criteria(), $con)->diff($answeredQuestionss);
 
 
         //since at least one column in the foreign key is at the same time a PK
         //we can not just set a PK to NULL in the lines below. We have to store
         //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->customerHasQuestionssScheduledForDeletion = clone $customerHasQuestionssToDelete;
+        $this->answeredQuestionssScheduledForDeletion = clone $answeredQuestionssToDelete;
 
-        foreach ($customerHasQuestionssToDelete as $customerHasQuestionsRemoved) {
-            $customerHasQuestionsRemoved->setQuestions(null);
+        foreach ($answeredQuestionssToDelete as $answeredQuestionsRemoved) {
+            $answeredQuestionsRemoved->setQuestions(null);
         }
 
-        $this->collCustomerHasQuestionss = null;
-        foreach ($customerHasQuestionss as $customerHasQuestions) {
-            $this->addCustomerHasQuestions($customerHasQuestions);
+        $this->collAnsweredQuestionss = null;
+        foreach ($answeredQuestionss as $answeredQuestions) {
+            $this->addAnsweredQuestions($answeredQuestions);
         }
 
-        $this->collCustomerHasQuestionss = $customerHasQuestionss;
-        $this->collCustomerHasQuestionssPartial = false;
+        $this->collAnsweredQuestionss = $answeredQuestionss;
+        $this->collAnsweredQuestionssPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related CustomerHasQuestions objects.
+     * Returns the number of related AnsweredQuestions objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related CustomerHasQuestions objects.
+     * @return int             Count of related AnsweredQuestions objects.
      * @throws PropelException
      */
-    public function countCustomerHasQuestionss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countAnsweredQuestionss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collCustomerHasQuestionssPartial && !$this->isNew();
-        if (null === $this->collCustomerHasQuestionss || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCustomerHasQuestionss) {
+        $partial = $this->collAnsweredQuestionssPartial && !$this->isNew();
+        if (null === $this->collAnsweredQuestionss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collAnsweredQuestionss) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getCustomerHasQuestionss());
+                return count($this->getAnsweredQuestionss());
             }
 
-            $query = ChildCustomerHasQuestionsQuery::create(null, $criteria);
+            $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1710,28 +1465,28 @@ abstract class Questions implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collCustomerHasQuestionss);
+        return count($this->collAnsweredQuestionss);
     }
 
     /**
-     * Method called to associate a ChildCustomerHasQuestions object to this object
-     * through the ChildCustomerHasQuestions foreign key attribute.
+     * Method called to associate a ChildAnsweredQuestions object to this object
+     * through the ChildAnsweredQuestions foreign key attribute.
      *
-     * @param  ChildCustomerHasQuestions $l ChildCustomerHasQuestions
+     * @param  ChildAnsweredQuestions $l ChildAnsweredQuestions
      * @return $this|\Questions The current object (for fluent API support)
      */
-    public function addCustomerHasQuestions(ChildCustomerHasQuestions $l)
+    public function addAnsweredQuestions(ChildAnsweredQuestions $l)
     {
-        if ($this->collCustomerHasQuestionss === null) {
-            $this->initCustomerHasQuestionss();
-            $this->collCustomerHasQuestionssPartial = true;
+        if ($this->collAnsweredQuestionss === null) {
+            $this->initAnsweredQuestionss();
+            $this->collAnsweredQuestionssPartial = true;
         }
 
-        if (!$this->collCustomerHasQuestionss->contains($l)) {
-            $this->doAddCustomerHasQuestions($l);
+        if (!$this->collAnsweredQuestionss->contains($l)) {
+            $this->doAddAnsweredQuestions($l);
 
-            if ($this->customerHasQuestionssScheduledForDeletion and $this->customerHasQuestionssScheduledForDeletion->contains($l)) {
-                $this->customerHasQuestionssScheduledForDeletion->remove($this->customerHasQuestionssScheduledForDeletion->search($l));
+            if ($this->answeredQuestionssScheduledForDeletion and $this->answeredQuestionssScheduledForDeletion->contains($l)) {
+                $this->answeredQuestionssScheduledForDeletion->remove($this->answeredQuestionssScheduledForDeletion->search($l));
             }
         }
 
@@ -1739,29 +1494,29 @@ abstract class Questions implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildCustomerHasQuestions $customerHasQuestions The ChildCustomerHasQuestions object to add.
+     * @param ChildAnsweredQuestions $answeredQuestions The ChildAnsweredQuestions object to add.
      */
-    protected function doAddCustomerHasQuestions(ChildCustomerHasQuestions $customerHasQuestions)
+    protected function doAddAnsweredQuestions(ChildAnsweredQuestions $answeredQuestions)
     {
-        $this->collCustomerHasQuestionss[]= $customerHasQuestions;
-        $customerHasQuestions->setQuestions($this);
+        $this->collAnsweredQuestionss[]= $answeredQuestions;
+        $answeredQuestions->setQuestions($this);
     }
 
     /**
-     * @param  ChildCustomerHasQuestions $customerHasQuestions The ChildCustomerHasQuestions object to remove.
+     * @param  ChildAnsweredQuestions $answeredQuestions The ChildAnsweredQuestions object to remove.
      * @return $this|ChildQuestions The current object (for fluent API support)
      */
-    public function removeCustomerHasQuestions(ChildCustomerHasQuestions $customerHasQuestions)
+    public function removeAnsweredQuestions(ChildAnsweredQuestions $answeredQuestions)
     {
-        if ($this->getCustomerHasQuestionss()->contains($customerHasQuestions)) {
-            $pos = $this->collCustomerHasQuestionss->search($customerHasQuestions);
-            $this->collCustomerHasQuestionss->remove($pos);
-            if (null === $this->customerHasQuestionssScheduledForDeletion) {
-                $this->customerHasQuestionssScheduledForDeletion = clone $this->collCustomerHasQuestionss;
-                $this->customerHasQuestionssScheduledForDeletion->clear();
+        if ($this->getAnsweredQuestionss()->contains($answeredQuestions)) {
+            $pos = $this->collAnsweredQuestionss->search($answeredQuestions);
+            $this->collAnsweredQuestionss->remove($pos);
+            if (null === $this->answeredQuestionssScheduledForDeletion) {
+                $this->answeredQuestionssScheduledForDeletion = clone $this->collAnsweredQuestionss;
+                $this->answeredQuestionssScheduledForDeletion->clear();
             }
-            $this->customerHasQuestionssScheduledForDeletion[]= clone $customerHasQuestions;
-            $customerHasQuestions->setQuestions(null);
+            $this->answeredQuestionssScheduledForDeletion[]= clone $answeredQuestions;
+            $answeredQuestions->setQuestions(null);
         }
 
         return $this;
@@ -1773,7 +1528,7 @@ abstract class Questions implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Questions is new, it will return
      * an empty collection; or if this Questions has previously
-     * been saved, it will retrieve related CustomerHasQuestionss from storage.
+     * been saved, it will retrieve related AnsweredQuestionss from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1782,482 +1537,39 @@ abstract class Questions implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildCustomerHasQuestions[] List of ChildCustomerHasQuestions objects
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
      */
-    public function getCustomerHasQuestionssJoinCustomer(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getAnsweredQuestionssJoinCustomer(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ChildCustomerHasQuestionsQuery::create(null, $criteria);
+        $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
         $query->joinWith('Customer', $joinBehavior);
 
-        return $this->getCustomerHasQuestionss($query, $con);
+        return $this->getAnsweredQuestionss($query, $con);
     }
 
-    /**
-     * Clears out the collMedias collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addMedias()
-     */
-    public function clearMedias()
-    {
-        $this->collMedias = null; // important to set this to NULL since that means it is uninitialized
-    }
 
     /**
-     * Reset is the collMedias collection loaded partially.
-     */
-    public function resetPartialMedias($v = true)
-    {
-        $this->collMediasPartial = $v;
-    }
-
-    /**
-     * Initializes the collMedias collection.
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Questions is new, it will return
+     * an empty collection; or if this Questions has previously
+     * been saved, it will retrieve related AnsweredQuestionss from storage.
      *
-     * By default this just sets the collMedias collection to an empty array (like clearcollMedias());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initMedias($overrideExisting = true)
-    {
-        if (null !== $this->collMedias && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = MediaTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collMedias = new $collectionClassName;
-        $this->collMedias->setModel('\Media');
-    }
-
-    /**
-     * Gets an array of ChildMedia objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildQuestions is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Questions.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildMedia[] List of ChildMedia objects
-     * @throws PropelException
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
      */
-    public function getMedias(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getAnsweredQuestionssJoinMedia(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $partial = $this->collMediasPartial && !$this->isNew();
-        if (null === $this->collMedias || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collMedias) {
-                // return empty collection
-                $this->initMedias();
-            } else {
-                $collMedias = ChildMediaQuery::create(null, $criteria)
-                    ->filterByQuestions($this)
-                    ->find($con);
+        $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
+        $query->joinWith('Media', $joinBehavior);
 
-                if (null !== $criteria) {
-                    if (false !== $this->collMediasPartial && count($collMedias)) {
-                        $this->initMedias(false);
-
-                        foreach ($collMedias as $obj) {
-                            if (false == $this->collMedias->contains($obj)) {
-                                $this->collMedias->append($obj);
-                            }
-                        }
-
-                        $this->collMediasPartial = true;
-                    }
-
-                    return $collMedias;
-                }
-
-                if ($partial && $this->collMedias) {
-                    foreach ($this->collMedias as $obj) {
-                        if ($obj->isNew()) {
-                            $collMedias[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collMedias = $collMedias;
-                $this->collMediasPartial = false;
-            }
-        }
-
-        return $this->collMedias;
-    }
-
-    /**
-     * Sets a collection of ChildMedia objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $medias A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildQuestions The current object (for fluent API support)
-     */
-    public function setMedias(Collection $medias, ConnectionInterface $con = null)
-    {
-        /** @var ChildMedia[] $mediasToDelete */
-        $mediasToDelete = $this->getMedias(new Criteria(), $con)->diff($medias);
-
-
-        $this->mediasScheduledForDeletion = $mediasToDelete;
-
-        foreach ($mediasToDelete as $mediaRemoved) {
-            $mediaRemoved->setQuestions(null);
-        }
-
-        $this->collMedias = null;
-        foreach ($medias as $media) {
-            $this->addMedia($media);
-        }
-
-        $this->collMedias = $medias;
-        $this->collMediasPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Media objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Media objects.
-     * @throws PropelException
-     */
-    public function countMedias(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collMediasPartial && !$this->isNew();
-        if (null === $this->collMedias || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collMedias) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getMedias());
-            }
-
-            $query = ChildMediaQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByQuestions($this)
-                ->count($con);
-        }
-
-        return count($this->collMedias);
-    }
-
-    /**
-     * Method called to associate a ChildMedia object to this object
-     * through the ChildMedia foreign key attribute.
-     *
-     * @param  ChildMedia $l ChildMedia
-     * @return $this|\Questions The current object (for fluent API support)
-     */
-    public function addMedia(ChildMedia $l)
-    {
-        if ($this->collMedias === null) {
-            $this->initMedias();
-            $this->collMediasPartial = true;
-        }
-
-        if (!$this->collMedias->contains($l)) {
-            $this->doAddMedia($l);
-
-            if ($this->mediasScheduledForDeletion and $this->mediasScheduledForDeletion->contains($l)) {
-                $this->mediasScheduledForDeletion->remove($this->mediasScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildMedia $media The ChildMedia object to add.
-     */
-    protected function doAddMedia(ChildMedia $media)
-    {
-        $this->collMedias[]= $media;
-        $media->setQuestions($this);
-    }
-
-    /**
-     * @param  ChildMedia $media The ChildMedia object to remove.
-     * @return $this|ChildQuestions The current object (for fluent API support)
-     */
-    public function removeMedia(ChildMedia $media)
-    {
-        if ($this->getMedias()->contains($media)) {
-            $pos = $this->collMedias->search($media);
-            $this->collMedias->remove($pos);
-            if (null === $this->mediasScheduledForDeletion) {
-                $this->mediasScheduledForDeletion = clone $this->collMedias;
-                $this->mediasScheduledForDeletion->clear();
-            }
-            $this->mediasScheduledForDeletion[]= clone $media;
-            $media->setQuestions(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collCustomers collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addCustomers()
-     */
-    public function clearCustomers()
-    {
-        $this->collCustomers = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Initializes the collCustomers crossRef collection.
-     *
-     * By default this just sets the collCustomers collection to an empty collection (like clearCustomers());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @return void
-     */
-    public function initCustomers()
-    {
-        $collectionClassName = CustomerHasQuestionsTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collCustomers = new $collectionClassName;
-        $this->collCustomersPartial = true;
-        $this->collCustomers->setModel('\Customer');
-    }
-
-    /**
-     * Checks if the collCustomers collection is loaded.
-     *
-     * @return bool
-     */
-    public function isCustomersLoaded()
-    {
-        return null !== $this->collCustomers;
-    }
-
-    /**
-     * Gets a collection of ChildCustomer objects related by a many-to-many relationship
-     * to the current object by way of the customer_has_questions cross-reference table.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildQuestions is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return ObjectCollection|ChildCustomer[] List of ChildCustomer objects
-     */
-    public function getCustomers(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomersPartial && !$this->isNew();
-        if (null === $this->collCustomers || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collCustomers) {
-                    $this->initCustomers();
-                }
-            } else {
-
-                $query = ChildCustomerQuery::create(null, $criteria)
-                    ->filterByQuestions($this);
-                $collCustomers = $query->find($con);
-                if (null !== $criteria) {
-                    return $collCustomers;
-                }
-
-                if ($partial && $this->collCustomers) {
-                    //make sure that already added objects gets added to the list of the database.
-                    foreach ($this->collCustomers as $obj) {
-                        if (!$collCustomers->contains($obj)) {
-                            $collCustomers[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collCustomers = $collCustomers;
-                $this->collCustomersPartial = false;
-            }
-        }
-
-        return $this->collCustomers;
-    }
-
-    /**
-     * Sets a collection of Customer objects related by a many-to-many relationship
-     * to the current object by way of the customer_has_questions cross-reference table.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param  Collection $customers A Propel collection.
-     * @param  ConnectionInterface $con Optional connection object
-     * @return $this|ChildQuestions The current object (for fluent API support)
-     */
-    public function setCustomers(Collection $customers, ConnectionInterface $con = null)
-    {
-        $this->clearCustomers();
-        $currentCustomers = $this->getCustomers();
-
-        $customersScheduledForDeletion = $currentCustomers->diff($customers);
-
-        foreach ($customersScheduledForDeletion as $toDelete) {
-            $this->removeCustomer($toDelete);
-        }
-
-        foreach ($customers as $customer) {
-            if (!$currentCustomers->contains($customer)) {
-                $this->doAddCustomer($customer);
-            }
-        }
-
-        $this->collCustomersPartial = false;
-        $this->collCustomers = $customers;
-
-        return $this;
-    }
-
-    /**
-     * Gets the number of Customer objects related by a many-to-many relationship
-     * to the current object by way of the customer_has_questions cross-reference table.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      boolean $distinct Set to true to force count distinct
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return int the number of related Customer objects
-     */
-    public function countCustomers(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomersPartial && !$this->isNew();
-        if (null === $this->collCustomers || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCustomers) {
-                return 0;
-            } else {
-
-                if ($partial && !$criteria) {
-                    return count($this->getCustomers());
-                }
-
-                $query = ChildCustomerQuery::create(null, $criteria);
-                if ($distinct) {
-                    $query->distinct();
-                }
-
-                return $query
-                    ->filterByQuestions($this)
-                    ->count($con);
-            }
-        } else {
-            return count($this->collCustomers);
-        }
-    }
-
-    /**
-     * Associate a ChildCustomer to this object
-     * through the customer_has_questions cross reference table.
-     *
-     * @param ChildCustomer $customer
-     * @return ChildQuestions The current object (for fluent API support)
-     */
-    public function addCustomer(ChildCustomer $customer)
-    {
-        if ($this->collCustomers === null) {
-            $this->initCustomers();
-        }
-
-        if (!$this->getCustomers()->contains($customer)) {
-            // only add it if the **same** object is not already associated
-            $this->collCustomers->push($customer);
-            $this->doAddCustomer($customer);
-        }
-
-        return $this;
-    }
-
-    /**
-     *
-     * @param ChildCustomer $customer
-     */
-    protected function doAddCustomer(ChildCustomer $customer)
-    {
-        $customerHasQuestions = new ChildCustomerHasQuestions();
-
-        $customerHasQuestions->setCustomer($customer);
-
-        $customerHasQuestions->setQuestions($this);
-
-        $this->addCustomerHasQuestions($customerHasQuestions);
-
-        // set the back reference to this object directly as using provided method either results
-        // in endless loop or in multiple relations
-        if (!$customer->isQuestionssLoaded()) {
-            $customer->initQuestionss();
-            $customer->getQuestionss()->push($this);
-        } elseif (!$customer->getQuestionss()->contains($this)) {
-            $customer->getQuestionss()->push($this);
-        }
-
-    }
-
-    /**
-     * Remove customer of this object
-     * through the customer_has_questions cross reference table.
-     *
-     * @param ChildCustomer $customer
-     * @return ChildQuestions The current object (for fluent API support)
-     */
-    public function removeCustomer(ChildCustomer $customer)
-    {
-        if ($this->getCustomers()->contains($customer)) {
-            $customerHasQuestions = new ChildCustomerHasQuestions();
-            $customerHasQuestions->setCustomer($customer);
-            if ($customer->isQuestionssLoaded()) {
-                //remove the back reference if available
-                $customer->getQuestionss()->removeObject($this);
-            }
-
-            $customerHasQuestions->setQuestions($this);
-            $this->removeCustomerHasQuestions(clone $customerHasQuestions);
-            $customerHasQuestions->clear();
-
-            $this->collCustomers->remove($this->collCustomers->search($customer));
-
-            if (null === $this->customersScheduledForDeletion) {
-                $this->customersScheduledForDeletion = clone $this->collCustomers;
-                $this->customersScheduledForDeletion->clear();
-            }
-
-            $this->customersScheduledForDeletion->push($customer);
-        }
-
-
-        return $this;
+        return $this->getAnsweredQuestionss($query, $con);
     }
 
     /**
@@ -2272,9 +1584,7 @@ abstract class Questions implements ActiveRecordInterface
         }
         $this->question_id = null;
         $this->question = null;
-        $this->response = null;
         $this->category_id = null;
-        $this->answered = null;
         $this->datecreated = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -2294,26 +1604,14 @@ abstract class Questions implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collCustomerHasQuestionss) {
-                foreach ($this->collCustomerHasQuestionss as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collMedias) {
-                foreach ($this->collMedias as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collCustomers) {
-                foreach ($this->collCustomers as $o) {
+            if ($this->collAnsweredQuestionss) {
+                foreach ($this->collAnsweredQuestionss as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collCustomerHasQuestionss = null;
-        $this->collMedias = null;
-        $this->collCustomers = null;
+        $this->collAnsweredQuestionss = null;
         $this->aCategory = null;
     }
 

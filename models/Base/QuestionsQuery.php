@@ -22,16 +22,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestionsQuery orderByQuestionId($order = Criteria::ASC) Order by the question_id column
  * @method     ChildQuestionsQuery orderByQuestion($order = Criteria::ASC) Order by the question column
- * @method     ChildQuestionsQuery orderByResponse($order = Criteria::ASC) Order by the response column
  * @method     ChildQuestionsQuery orderByCategoryId($order = Criteria::ASC) Order by the Category_id column
- * @method     ChildQuestionsQuery orderByAnswered($order = Criteria::ASC) Order by the answered column
  * @method     ChildQuestionsQuery orderByDatecreated($order = Criteria::ASC) Order by the datecreated column
  *
  * @method     ChildQuestionsQuery groupByQuestionId() Group by the question_id column
  * @method     ChildQuestionsQuery groupByQuestion() Group by the question column
- * @method     ChildQuestionsQuery groupByResponse() Group by the response column
  * @method     ChildQuestionsQuery groupByCategoryId() Group by the Category_id column
- * @method     ChildQuestionsQuery groupByAnswered() Group by the answered column
  * @method     ChildQuestionsQuery groupByDatecreated() Group by the datecreated column
  *
  * @method     ChildQuestionsQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -52,36 +48,24 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionsQuery rightJoinWithCategory() Adds a RIGHT JOIN clause and with to the query using the Category relation
  * @method     ChildQuestionsQuery innerJoinWithCategory() Adds a INNER JOIN clause and with to the query using the Category relation
  *
- * @method     ChildQuestionsQuery leftJoinCustomerHasQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the CustomerHasQuestions relation
- * @method     ChildQuestionsQuery rightJoinCustomerHasQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CustomerHasQuestions relation
- * @method     ChildQuestionsQuery innerJoinCustomerHasQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the CustomerHasQuestions relation
+ * @method     ChildQuestionsQuery leftJoinAnsweredQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildQuestionsQuery rightJoinAnsweredQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildQuestionsQuery innerJoinAnsweredQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the AnsweredQuestions relation
  *
- * @method     ChildQuestionsQuery joinWithCustomerHasQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CustomerHasQuestions relation
+ * @method     ChildQuestionsQuery joinWithAnsweredQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the AnsweredQuestions relation
  *
- * @method     ChildQuestionsQuery leftJoinWithCustomerHasQuestions() Adds a LEFT JOIN clause and with to the query using the CustomerHasQuestions relation
- * @method     ChildQuestionsQuery rightJoinWithCustomerHasQuestions() Adds a RIGHT JOIN clause and with to the query using the CustomerHasQuestions relation
- * @method     ChildQuestionsQuery innerJoinWithCustomerHasQuestions() Adds a INNER JOIN clause and with to the query using the CustomerHasQuestions relation
+ * @method     ChildQuestionsQuery leftJoinWithAnsweredQuestions() Adds a LEFT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildQuestionsQuery rightJoinWithAnsweredQuestions() Adds a RIGHT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildQuestionsQuery innerJoinWithAnsweredQuestions() Adds a INNER JOIN clause and with to the query using the AnsweredQuestions relation
  *
- * @method     ChildQuestionsQuery leftJoinMedia($relationAlias = null) Adds a LEFT JOIN clause to the query using the Media relation
- * @method     ChildQuestionsQuery rightJoinMedia($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Media relation
- * @method     ChildQuestionsQuery innerJoinMedia($relationAlias = null) Adds a INNER JOIN clause to the query using the Media relation
- *
- * @method     ChildQuestionsQuery joinWithMedia($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Media relation
- *
- * @method     ChildQuestionsQuery leftJoinWithMedia() Adds a LEFT JOIN clause and with to the query using the Media relation
- * @method     ChildQuestionsQuery rightJoinWithMedia() Adds a RIGHT JOIN clause and with to the query using the Media relation
- * @method     ChildQuestionsQuery innerJoinWithMedia() Adds a INNER JOIN clause and with to the query using the Media relation
- *
- * @method     \CategoryQuery|\CustomerHasQuestionsQuery|\MediaQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CategoryQuery|\AnsweredQuestionsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildQuestions findOne(ConnectionInterface $con = null) Return the first ChildQuestions matching the query
  * @method     ChildQuestions findOneOrCreate(ConnectionInterface $con = null) Return the first ChildQuestions matching the query, or a new ChildQuestions object populated from the query conditions when no match is found
  *
  * @method     ChildQuestions findOneByQuestionId(int $question_id) Return the first ChildQuestions filtered by the question_id column
  * @method     ChildQuestions findOneByQuestion(string $question) Return the first ChildQuestions filtered by the question column
- * @method     ChildQuestions findOneByResponse(string $response) Return the first ChildQuestions filtered by the response column
  * @method     ChildQuestions findOneByCategoryId(int $Category_id) Return the first ChildQuestions filtered by the Category_id column
- * @method     ChildQuestions findOneByAnswered(boolean $answered) Return the first ChildQuestions filtered by the answered column
  * @method     ChildQuestions findOneByDatecreated(string $datecreated) Return the first ChildQuestions filtered by the datecreated column *
 
  * @method     ChildQuestions requirePk($key, ConnectionInterface $con = null) Return the ChildQuestions by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -89,17 +73,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildQuestions requireOneByQuestionId(int $question_id) Return the first ChildQuestions filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOneByQuestion(string $question) Return the first ChildQuestions filtered by the question column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildQuestions requireOneByResponse(string $response) Return the first ChildQuestions filtered by the response column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOneByCategoryId(int $Category_id) Return the first ChildQuestions filtered by the Category_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildQuestions requireOneByAnswered(boolean $answered) Return the first ChildQuestions filtered by the answered column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOneByDatecreated(string $datecreated) Return the first ChildQuestions filtered by the datecreated column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildQuestions[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestions objects based on current ModelCriteria
  * @method     ChildQuestions[]|ObjectCollection findByQuestionId(int $question_id) Return ChildQuestions objects filtered by the question_id column
  * @method     ChildQuestions[]|ObjectCollection findByQuestion(string $question) Return ChildQuestions objects filtered by the question column
- * @method     ChildQuestions[]|ObjectCollection findByResponse(string $response) Return ChildQuestions objects filtered by the response column
  * @method     ChildQuestions[]|ObjectCollection findByCategoryId(int $Category_id) Return ChildQuestions objects filtered by the Category_id column
- * @method     ChildQuestions[]|ObjectCollection findByAnswered(boolean $answered) Return ChildQuestions objects filtered by the answered column
  * @method     ChildQuestions[]|ObjectCollection findByDatecreated(string $datecreated) Return ChildQuestions objects filtered by the datecreated column
  * @method     ChildQuestions[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -199,7 +179,7 @@ abstract class QuestionsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT question_id, question, response, Category_id, answered, datecreated FROM questions WHERE question_id = :p0';
+        $sql = 'SELECT question_id, question, Category_id, datecreated FROM questions WHERE question_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -356,31 +336,6 @@ abstract class QuestionsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the response column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByResponse('fooValue');   // WHERE response = 'fooValue'
-     * $query->filterByResponse('%fooValue%', Criteria::LIKE); // WHERE response LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $response The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildQuestionsQuery The current query, for fluid interface
-     */
-    public function filterByResponse($response = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($response)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(QuestionsTableMap::COL_RESPONSE, $response, $comparison);
-    }
-
-    /**
      * Filter the query on the Category_id column
      *
      * Example usage:
@@ -421,33 +376,6 @@ abstract class QuestionsQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(QuestionsTableMap::COL_CATEGORY_ID, $categoryId, $comparison);
-    }
-
-    /**
-     * Filter the query on the answered column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByAnswered(true); // WHERE answered = true
-     * $query->filterByAnswered('yes'); // WHERE answered = true
-     * </code>
-     *
-     * @param     boolean|string $answered The value to use as filter.
-     *              Non-boolean arguments are converted using the following rules:
-     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildQuestionsQuery The current query, for fluid interface
-     */
-    public function filterByAnswered($answered = null, $comparison = null)
-    {
-        if (is_string($answered)) {
-            $answered = in_array(strtolower($answered), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-        }
-
-        return $this->addUsingAlias(QuestionsTableMap::COL_ANSWERED, $answered, $comparison);
     }
 
     /**
@@ -571,40 +499,40 @@ abstract class QuestionsQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CustomerHasQuestions object
+     * Filter the query by a related \AnsweredQuestions object
      *
-     * @param \CustomerHasQuestions|ObjectCollection $customerHasQuestions the related object to use as filter
+     * @param \AnsweredQuestions|ObjectCollection $answeredQuestions the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildQuestionsQuery The current query, for fluid interface
      */
-    public function filterByCustomerHasQuestions($customerHasQuestions, $comparison = null)
+    public function filterByAnsweredQuestions($answeredQuestions, $comparison = null)
     {
-        if ($customerHasQuestions instanceof \CustomerHasQuestions) {
+        if ($answeredQuestions instanceof \AnsweredQuestions) {
             return $this
-                ->addUsingAlias(QuestionsTableMap::COL_QUESTION_ID, $customerHasQuestions->getQuestionsId(), $comparison);
-        } elseif ($customerHasQuestions instanceof ObjectCollection) {
+                ->addUsingAlias(QuestionsTableMap::COL_QUESTION_ID, $answeredQuestions->getQuestionId(), $comparison);
+        } elseif ($answeredQuestions instanceof ObjectCollection) {
             return $this
-                ->useCustomerHasQuestionsQuery()
-                ->filterByPrimaryKeys($customerHasQuestions->getPrimaryKeys())
+                ->useAnsweredQuestionsQuery()
+                ->filterByPrimaryKeys($answeredQuestions->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByCustomerHasQuestions() only accepts arguments of type \CustomerHasQuestions or Collection');
+            throw new PropelException('filterByAnsweredQuestions() only accepts arguments of type \AnsweredQuestions or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the CustomerHasQuestions relation
+     * Adds a JOIN clause to the query using the AnsweredQuestions relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildQuestionsQuery The current query, for fluid interface
      */
-    public function joinCustomerHasQuestions($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinAnsweredQuestions($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CustomerHasQuestions');
+        $relationMap = $tableMap->getRelation('AnsweredQuestions');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -619,14 +547,14 @@ abstract class QuestionsQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'CustomerHasQuestions');
+            $this->addJoinObject($join, 'AnsweredQuestions');
         }
 
         return $this;
     }
 
     /**
-     * Use the CustomerHasQuestions relation CustomerHasQuestions object
+     * Use the AnsweredQuestions relation AnsweredQuestions object
      *
      * @see useQuery()
      *
@@ -634,103 +562,13 @@ abstract class QuestionsQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CustomerHasQuestionsQuery A secondary query class using the current class as primary query
+     * @return \AnsweredQuestionsQuery A secondary query class using the current class as primary query
      */
-    public function useCustomerHasQuestionsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useAnsweredQuestionsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinCustomerHasQuestions($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CustomerHasQuestions', '\CustomerHasQuestionsQuery');
-    }
-
-    /**
-     * Filter the query by a related \Media object
-     *
-     * @param \Media|ObjectCollection $media the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildQuestionsQuery The current query, for fluid interface
-     */
-    public function filterByMedia($media, $comparison = null)
-    {
-        if ($media instanceof \Media) {
-            return $this
-                ->addUsingAlias(QuestionsTableMap::COL_QUESTION_ID, $media->getQuestionId(), $comparison);
-        } elseif ($media instanceof ObjectCollection) {
-            return $this
-                ->useMediaQuery()
-                ->filterByPrimaryKeys($media->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByMedia() only accepts arguments of type \Media or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Media relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildQuestionsQuery The current query, for fluid interface
-     */
-    public function joinMedia($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Media');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Media');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Media relation Media object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \MediaQuery A secondary query class using the current class as primary query
-     */
-    public function useMediaQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinMedia($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Media', '\MediaQuery');
-    }
-
-    /**
-     * Filter the query by a related Customer object
-     * using the customer_has_questions table as cross reference
-     *
-     * @param Customer $customer the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildQuestionsQuery The current query, for fluid interface
-     */
-    public function filterByCustomer($customer, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useCustomerHasQuestionsQuery()
-            ->filterByCustomer($customer, $comparison)
-            ->endUse();
+            ->joinAnsweredQuestions($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AnsweredQuestions', '\AnsweredQuestionsQuery');
     }
 
     /**

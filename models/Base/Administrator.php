@@ -69,11 +69,25 @@ abstract class Administrator implements ActiveRecordInterface
     protected $admin_id;
 
     /**
-     * The value for the user_info_id field.
+     * The value for the info_id field.
      *
      * @var        int
      */
-    protected $user_info_id;
+    protected $info_id;
+
+    /**
+     * The value for the username field.
+     *
+     * @var        string
+     */
+    protected $username;
+
+    /**
+     * The value for the password field.
+     *
+     * @var        string
+     */
+    protected $password;
 
     /**
      * @var        ChildUserInfo
@@ -324,13 +338,33 @@ abstract class Administrator implements ActiveRecordInterface
     }
 
     /**
-     * Get the [user_info_id] column value.
+     * Get the [info_id] column value.
      *
      * @return int
      */
-    public function getUserInfoId()
+    public function getInfoId()
     {
-        return $this->user_info_id;
+        return $this->info_id;
+    }
+
+    /**
+     * Get the [username] column value.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Get the [password] column value.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
@@ -354,20 +388,20 @@ abstract class Administrator implements ActiveRecordInterface
     } // setAdminId()
 
     /**
-     * Set the value of [user_info_id] column.
+     * Set the value of [info_id] column.
      *
      * @param int $v new value
      * @return $this|\Administrator The current object (for fluent API support)
      */
-    public function setUserInfoId($v)
+    public function setInfoId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->user_info_id !== $v) {
-            $this->user_info_id = $v;
-            $this->modifiedColumns[AdministratorTableMap::COL_USER_INFO_ID] = true;
+        if ($this->info_id !== $v) {
+            $this->info_id = $v;
+            $this->modifiedColumns[AdministratorTableMap::COL_INFO_ID] = true;
         }
 
         if ($this->aUserInfo !== null && $this->aUserInfo->getUserId() !== $v) {
@@ -375,7 +409,47 @@ abstract class Administrator implements ActiveRecordInterface
         }
 
         return $this;
-    } // setUserInfoId()
+    } // setInfoId()
+
+    /**
+     * Set the value of [username] column.
+     *
+     * @param string $v new value
+     * @return $this|\Administrator The current object (for fluent API support)
+     */
+    public function setUsername($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->username !== $v) {
+            $this->username = $v;
+            $this->modifiedColumns[AdministratorTableMap::COL_USERNAME] = true;
+        }
+
+        return $this;
+    } // setUsername()
+
+    /**
+     * Set the value of [password] column.
+     *
+     * @param string $v new value
+     * @return $this|\Administrator The current object (for fluent API support)
+     */
+    public function setPassword($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->password !== $v) {
+            $this->password = $v;
+            $this->modifiedColumns[AdministratorTableMap::COL_PASSWORD] = true;
+        }
+
+        return $this;
+    } // setPassword()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -416,8 +490,14 @@ abstract class Administrator implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : AdministratorTableMap::translateFieldName('AdminId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->admin_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AdministratorTableMap::translateFieldName('UserInfoId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_info_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AdministratorTableMap::translateFieldName('InfoId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->info_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AdministratorTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->username = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AdministratorTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->password = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -426,7 +506,7 @@ abstract class Administrator implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 2; // 2 = AdministratorTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = AdministratorTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Administrator'), 0, $e);
@@ -448,7 +528,7 @@ abstract class Administrator implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUserInfo !== null && $this->user_info_id !== $this->aUserInfo->getUserId()) {
+        if ($this->aUserInfo !== null && $this->info_id !== $this->aUserInfo->getUserId()) {
             $this->aUserInfo = null;
         }
     } // ensureConsistency
@@ -646,8 +726,14 @@ abstract class Administrator implements ActiveRecordInterface
         if ($this->isColumnModified(AdministratorTableMap::COL_ADMIN_ID)) {
             $modifiedColumns[':p' . $index++]  = 'admin_id';
         }
-        if ($this->isColumnModified(AdministratorTableMap::COL_USER_INFO_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_info_id';
+        if ($this->isColumnModified(AdministratorTableMap::COL_INFO_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'info_id';
+        }
+        if ($this->isColumnModified(AdministratorTableMap::COL_USERNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'username';
+        }
+        if ($this->isColumnModified(AdministratorTableMap::COL_PASSWORD)) {
+            $modifiedColumns[':p' . $index++]  = 'password';
         }
 
         $sql = sprintf(
@@ -663,8 +749,14 @@ abstract class Administrator implements ActiveRecordInterface
                     case 'admin_id':
                         $stmt->bindValue($identifier, $this->admin_id, PDO::PARAM_INT);
                         break;
-                    case 'user_info_id':
-                        $stmt->bindValue($identifier, $this->user_info_id, PDO::PARAM_INT);
+                    case 'info_id':
+                        $stmt->bindValue($identifier, $this->info_id, PDO::PARAM_INT);
+                        break;
+                    case 'username':
+                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
+                        break;
+                    case 'password':
+                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -732,7 +824,13 @@ abstract class Administrator implements ActiveRecordInterface
                 return $this->getAdminId();
                 break;
             case 1:
-                return $this->getUserInfoId();
+                return $this->getInfoId();
+                break;
+            case 2:
+                return $this->getUsername();
+                break;
+            case 3:
+                return $this->getPassword();
                 break;
             default:
                 return null;
@@ -765,7 +863,9 @@ abstract class Administrator implements ActiveRecordInterface
         $keys = AdministratorTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getAdminId(),
-            $keys[1] => $this->getUserInfoId(),
+            $keys[1] => $this->getInfoId(),
+            $keys[2] => $this->getUsername(),
+            $keys[3] => $this->getPassword(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -826,7 +926,13 @@ abstract class Administrator implements ActiveRecordInterface
                 $this->setAdminId($value);
                 break;
             case 1:
-                $this->setUserInfoId($value);
+                $this->setInfoId($value);
+                break;
+            case 2:
+                $this->setUsername($value);
+                break;
+            case 3:
+                $this->setPassword($value);
                 break;
         } // switch()
 
@@ -858,7 +964,13 @@ abstract class Administrator implements ActiveRecordInterface
             $this->setAdminId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUserInfoId($arr[$keys[1]]);
+            $this->setInfoId($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setUsername($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setPassword($arr[$keys[3]]);
         }
     }
 
@@ -904,8 +1016,14 @@ abstract class Administrator implements ActiveRecordInterface
         if ($this->isColumnModified(AdministratorTableMap::COL_ADMIN_ID)) {
             $criteria->add(AdministratorTableMap::COL_ADMIN_ID, $this->admin_id);
         }
-        if ($this->isColumnModified(AdministratorTableMap::COL_USER_INFO_ID)) {
-            $criteria->add(AdministratorTableMap::COL_USER_INFO_ID, $this->user_info_id);
+        if ($this->isColumnModified(AdministratorTableMap::COL_INFO_ID)) {
+            $criteria->add(AdministratorTableMap::COL_INFO_ID, $this->info_id);
+        }
+        if ($this->isColumnModified(AdministratorTableMap::COL_USERNAME)) {
+            $criteria->add(AdministratorTableMap::COL_USERNAME, $this->username);
+        }
+        if ($this->isColumnModified(AdministratorTableMap::COL_PASSWORD)) {
+            $criteria->add(AdministratorTableMap::COL_PASSWORD, $this->password);
         }
 
         return $criteria;
@@ -993,7 +1111,9 @@ abstract class Administrator implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUserInfoId($this->getUserInfoId());
+        $copyObj->setInfoId($this->getInfoId());
+        $copyObj->setUsername($this->getUsername());
+        $copyObj->setPassword($this->getPassword());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setAdminId(NULL); // this is a auto-increment column, so set to default value
@@ -1032,9 +1152,9 @@ abstract class Administrator implements ActiveRecordInterface
     public function setUserInfo(ChildUserInfo $v = null)
     {
         if ($v === null) {
-            $this->setUserInfoId(NULL);
+            $this->setInfoId(NULL);
         } else {
-            $this->setUserInfoId($v->getUserId());
+            $this->setInfoId($v->getUserId());
         }
 
         $this->aUserInfo = $v;
@@ -1059,8 +1179,8 @@ abstract class Administrator implements ActiveRecordInterface
      */
     public function getUserInfo(ConnectionInterface $con = null)
     {
-        if ($this->aUserInfo === null && ($this->user_info_id != 0)) {
-            $this->aUserInfo = ChildUserInfoQuery::create()->findPk($this->user_info_id, $con);
+        if ($this->aUserInfo === null && ($this->info_id != 0)) {
+            $this->aUserInfo = ChildUserInfoQuery::create()->findPk($this->info_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1084,7 +1204,9 @@ abstract class Administrator implements ActiveRecordInterface
             $this->aUserInfo->removeAdministrator($this);
         }
         $this->admin_id = null;
-        $this->user_info_id = null;
+        $this->info_id = null;
+        $this->username = null;
+        $this->password = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

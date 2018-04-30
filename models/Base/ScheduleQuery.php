@@ -21,15 +21,15 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildScheduleQuery orderByScheduleId($order = Criteria::ASC) Order by the schedule_id column
- * @method     ChildScheduleQuery orderByTime($order = Criteria::ASC) Order by the time column
- * @method     ChildScheduleQuery orderByDatemade($order = Criteria::ASC) Order by the datemade column
+ * @method     ChildScheduleQuery orderByStartTime($order = Criteria::ASC) Order by the start_time column
+ * @method     ChildScheduleQuery orderByEndTime($order = Criteria::ASC) Order by the end_time column
  * @method     ChildScheduleQuery orderByMentorId($order = Criteria::ASC) Order by the Mentor_id column
  * @method     ChildScheduleQuery orderByCustomerId($order = Criteria::ASC) Order by the Customer_id column
  * @method     ChildScheduleQuery orderByRoom($order = Criteria::ASC) Order by the room column
  *
  * @method     ChildScheduleQuery groupByScheduleId() Group by the schedule_id column
- * @method     ChildScheduleQuery groupByTime() Group by the time column
- * @method     ChildScheduleQuery groupByDatemade() Group by the datemade column
+ * @method     ChildScheduleQuery groupByStartTime() Group by the start_time column
+ * @method     ChildScheduleQuery groupByEndTime() Group by the end_time column
  * @method     ChildScheduleQuery groupByMentorId() Group by the Mentor_id column
  * @method     ChildScheduleQuery groupByCustomerId() Group by the Customer_id column
  * @method     ChildScheduleQuery groupByRoom() Group by the room column
@@ -68,8 +68,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSchedule findOneOrCreate(ConnectionInterface $con = null) Return the first ChildSchedule matching the query, or a new ChildSchedule object populated from the query conditions when no match is found
  *
  * @method     ChildSchedule findOneByScheduleId(int $schedule_id) Return the first ChildSchedule filtered by the schedule_id column
- * @method     ChildSchedule findOneByTime(string $time) Return the first ChildSchedule filtered by the time column
- * @method     ChildSchedule findOneByDatemade(string $datemade) Return the first ChildSchedule filtered by the datemade column
+ * @method     ChildSchedule findOneByStartTime(string $start_time) Return the first ChildSchedule filtered by the start_time column
+ * @method     ChildSchedule findOneByEndTime(string $end_time) Return the first ChildSchedule filtered by the end_time column
  * @method     ChildSchedule findOneByMentorId(int $Mentor_id) Return the first ChildSchedule filtered by the Mentor_id column
  * @method     ChildSchedule findOneByCustomerId(int $Customer_id) Return the first ChildSchedule filtered by the Customer_id column
  * @method     ChildSchedule findOneByRoom(int $room) Return the first ChildSchedule filtered by the room column *
@@ -78,16 +78,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSchedule requireOne(ConnectionInterface $con = null) Return the first ChildSchedule matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildSchedule requireOneByScheduleId(int $schedule_id) Return the first ChildSchedule filtered by the schedule_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByTime(string $time) Return the first ChildSchedule filtered by the time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByDatemade(string $datemade) Return the first ChildSchedule filtered by the datemade column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSchedule requireOneByStartTime(string $start_time) Return the first ChildSchedule filtered by the start_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSchedule requireOneByEndTime(string $end_time) Return the first ChildSchedule filtered by the end_time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByMentorId(int $Mentor_id) Return the first ChildSchedule filtered by the Mentor_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByCustomerId(int $Customer_id) Return the first ChildSchedule filtered by the Customer_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByRoom(int $room) Return the first ChildSchedule filtered by the room column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildSchedule[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildSchedule objects based on current ModelCriteria
  * @method     ChildSchedule[]|ObjectCollection findByScheduleId(int $schedule_id) Return ChildSchedule objects filtered by the schedule_id column
- * @method     ChildSchedule[]|ObjectCollection findByTime(string $time) Return ChildSchedule objects filtered by the time column
- * @method     ChildSchedule[]|ObjectCollection findByDatemade(string $datemade) Return ChildSchedule objects filtered by the datemade column
+ * @method     ChildSchedule[]|ObjectCollection findByStartTime(string $start_time) Return ChildSchedule objects filtered by the start_time column
+ * @method     ChildSchedule[]|ObjectCollection findByEndTime(string $end_time) Return ChildSchedule objects filtered by the end_time column
  * @method     ChildSchedule[]|ObjectCollection findByMentorId(int $Mentor_id) Return ChildSchedule objects filtered by the Mentor_id column
  * @method     ChildSchedule[]|ObjectCollection findByCustomerId(int $Customer_id) Return ChildSchedule objects filtered by the Customer_id column
  * @method     ChildSchedule[]|ObjectCollection findByRoom(int $room) Return ChildSchedule objects filtered by the room column
@@ -189,7 +189,7 @@ abstract class ScheduleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT schedule_id, time, datemade, Mentor_id, Customer_id, room FROM schedule WHERE schedule_id = :p0 AND Mentor_id = :p1 AND Customer_id = :p2';
+        $sql = 'SELECT schedule_id, start_time, end_time, Mentor_id, Customer_id, room FROM schedule WHERE schedule_id = :p0 AND Mentor_id = :p1 AND Customer_id = :p2';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -337,16 +337,16 @@ abstract class ScheduleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the time column
+     * Filter the query on the start_time column
      *
      * Example usage:
      * <code>
-     * $query->filterByTime('2011-03-14'); // WHERE time = '2011-03-14'
-     * $query->filterByTime('now'); // WHERE time = '2011-03-14'
-     * $query->filterByTime(array('max' => 'yesterday')); // WHERE time > '2011-03-13'
+     * $query->filterByStartTime('2011-03-14'); // WHERE start_time = '2011-03-14'
+     * $query->filterByStartTime('now'); // WHERE start_time = '2011-03-14'
+     * $query->filterByStartTime(array('max' => 'yesterday')); // WHERE start_time > '2011-03-13'
      * </code>
      *
-     * @param     mixed $time The value to use as filter.
+     * @param     mixed $startTime The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -356,16 +356,16 @@ abstract class ScheduleQuery extends ModelCriteria
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByTime($time = null, $comparison = null)
+    public function filterByStartTime($startTime = null, $comparison = null)
     {
-        if (is_array($time)) {
+        if (is_array($startTime)) {
             $useMinMax = false;
-            if (isset($time['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME, $time['min'], Criteria::GREATER_EQUAL);
+            if (isset($startTime['min'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_START_TIME, $startTime['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($time['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME, $time['max'], Criteria::LESS_EQUAL);
+            if (isset($startTime['max'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_START_TIME, $startTime['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -376,20 +376,20 @@ abstract class ScheduleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_TIME, $time, $comparison);
+        return $this->addUsingAlias(ScheduleTableMap::COL_START_TIME, $startTime, $comparison);
     }
 
     /**
-     * Filter the query on the datemade column
+     * Filter the query on the end_time column
      *
      * Example usage:
      * <code>
-     * $query->filterByDatemade('2011-03-14'); // WHERE datemade = '2011-03-14'
-     * $query->filterByDatemade('now'); // WHERE datemade = '2011-03-14'
-     * $query->filterByDatemade(array('max' => 'yesterday')); // WHERE datemade > '2011-03-13'
+     * $query->filterByEndTime('2011-03-14'); // WHERE end_time = '2011-03-14'
+     * $query->filterByEndTime('now'); // WHERE end_time = '2011-03-14'
+     * $query->filterByEndTime(array('max' => 'yesterday')); // WHERE end_time > '2011-03-13'
      * </code>
      *
-     * @param     mixed $datemade The value to use as filter.
+     * @param     mixed $endTime The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -399,16 +399,16 @@ abstract class ScheduleQuery extends ModelCriteria
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByDatemade($datemade = null, $comparison = null)
+    public function filterByEndTime($endTime = null, $comparison = null)
     {
-        if (is_array($datemade)) {
+        if (is_array($endTime)) {
             $useMinMax = false;
-            if (isset($datemade['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_DATEMADE, $datemade['min'], Criteria::GREATER_EQUAL);
+            if (isset($endTime['min'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_END_TIME, $endTime['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($datemade['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_DATEMADE, $datemade['max'], Criteria::LESS_EQUAL);
+            if (isset($endTime['max'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_END_TIME, $endTime['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -419,7 +419,7 @@ abstract class ScheduleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_DATEMADE, $datemade, $comparison);
+        return $this->addUsingAlias(ScheduleTableMap::COL_END_TIME, $endTime, $comparison);
     }
 
     /**

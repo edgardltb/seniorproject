@@ -59,7 +59,7 @@ class MediaTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class MediaTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the Media_id field
@@ -87,11 +87,6 @@ class MediaTableMap extends TableMap
     const COL_LINK = 'media.link';
 
     /**
-     * the column name for the question_id field
-     */
-    const COL_QUESTION_ID = 'media.question_id';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -103,11 +98,11 @@ class MediaTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('MediaId', 'Video', 'Link', 'QuestionId', ),
-        self::TYPE_CAMELNAME     => array('mediaId', 'video', 'link', 'questionId', ),
-        self::TYPE_COLNAME       => array(MediaTableMap::COL_MEDIA_ID, MediaTableMap::COL_VIDEO, MediaTableMap::COL_LINK, MediaTableMap::COL_QUESTION_ID, ),
-        self::TYPE_FIELDNAME     => array('Media_id', 'video', 'link', 'question_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('MediaId', 'Video', 'Link', ),
+        self::TYPE_CAMELNAME     => array('mediaId', 'video', 'link', ),
+        self::TYPE_COLNAME       => array(MediaTableMap::COL_MEDIA_ID, MediaTableMap::COL_VIDEO, MediaTableMap::COL_LINK, ),
+        self::TYPE_FIELDNAME     => array('Media_id', 'video', 'link', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -117,11 +112,11 @@ class MediaTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('MediaId' => 0, 'Video' => 1, 'Link' => 2, 'QuestionId' => 3, ),
-        self::TYPE_CAMELNAME     => array('mediaId' => 0, 'video' => 1, 'link' => 2, 'questionId' => 3, ),
-        self::TYPE_COLNAME       => array(MediaTableMap::COL_MEDIA_ID => 0, MediaTableMap::COL_VIDEO => 1, MediaTableMap::COL_LINK => 2, MediaTableMap::COL_QUESTION_ID => 3, ),
-        self::TYPE_FIELDNAME     => array('Media_id' => 0, 'video' => 1, 'link' => 2, 'question_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('MediaId' => 0, 'Video' => 1, 'Link' => 2, ),
+        self::TYPE_CAMELNAME     => array('mediaId' => 0, 'video' => 1, 'link' => 2, ),
+        self::TYPE_COLNAME       => array(MediaTableMap::COL_MEDIA_ID => 0, MediaTableMap::COL_VIDEO => 1, MediaTableMap::COL_LINK => 2, ),
+        self::TYPE_FIELDNAME     => array('Media_id' => 0, 'video' => 1, 'link' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -144,7 +139,6 @@ class MediaTableMap extends TableMap
         $this->addPrimaryKey('Media_id', 'MediaId', 'INTEGER', true, null, null);
         $this->addColumn('video', 'Video', 'BOOLEAN', false, 1, null);
         $this->addColumn('link', 'Link', 'VARCHAR', false, 255, null);
-        $this->addForeignKey('question_id', 'QuestionId', 'INTEGER', 'questions', 'question_id', true, null, null);
     } // initialize()
 
     /**
@@ -152,14 +146,23 @@ class MediaTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Questions', '\\Questions', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('AnsweredQuestions', '\\AnsweredQuestions', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':question_id',
-    1 => ':question_id',
+    0 => ':media_id',
+    1 => ':Media_id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, 'AnsweredQuestionss', false);
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to media     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        AnsweredQuestionsTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -305,12 +308,10 @@ class MediaTableMap extends TableMap
             $criteria->addSelectColumn(MediaTableMap::COL_MEDIA_ID);
             $criteria->addSelectColumn(MediaTableMap::COL_VIDEO);
             $criteria->addSelectColumn(MediaTableMap::COL_LINK);
-            $criteria->addSelectColumn(MediaTableMap::COL_QUESTION_ID);
         } else {
             $criteria->addSelectColumn($alias . '.Media_id');
             $criteria->addSelectColumn($alias . '.video');
             $criteria->addSelectColumn($alias . '.link');
-            $criteria->addSelectColumn($alias . '.question_id');
         }
     }
 

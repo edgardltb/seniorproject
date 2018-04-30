@@ -59,7 +59,7 @@ class MentorTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class MentorTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the mentor_id field
@@ -87,6 +87,16 @@ class MentorTableMap extends TableMap
     const COL_INFO = 'mentor.info';
 
     /**
+     * the column name for the username field
+     */
+    const COL_USERNAME = 'mentor.username';
+
+    /**
+     * the column name for the password field
+     */
+    const COL_PASSWORD = 'mentor.password';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -98,11 +108,11 @@ class MentorTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('MentorId', 'Categorie', 'Info', ),
-        self::TYPE_CAMELNAME     => array('mentorId', 'categorie', 'info', ),
-        self::TYPE_COLNAME       => array(MentorTableMap::COL_MENTOR_ID, MentorTableMap::COL_CATEGORIE, MentorTableMap::COL_INFO, ),
-        self::TYPE_FIELDNAME     => array('mentor_id', 'categorie', 'info', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('MentorId', 'Categorie', 'Info', 'Username', 'Password', ),
+        self::TYPE_CAMELNAME     => array('mentorId', 'categorie', 'info', 'username', 'password', ),
+        self::TYPE_COLNAME       => array(MentorTableMap::COL_MENTOR_ID, MentorTableMap::COL_CATEGORIE, MentorTableMap::COL_INFO, MentorTableMap::COL_USERNAME, MentorTableMap::COL_PASSWORD, ),
+        self::TYPE_FIELDNAME     => array('mentor_id', 'categorie', 'info', 'username', 'password', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -112,11 +122,11 @@ class MentorTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('MentorId' => 0, 'Categorie' => 1, 'Info' => 2, ),
-        self::TYPE_CAMELNAME     => array('mentorId' => 0, 'categorie' => 1, 'info' => 2, ),
-        self::TYPE_COLNAME       => array(MentorTableMap::COL_MENTOR_ID => 0, MentorTableMap::COL_CATEGORIE => 1, MentorTableMap::COL_INFO => 2, ),
-        self::TYPE_FIELDNAME     => array('mentor_id' => 0, 'categorie' => 1, 'info' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('MentorId' => 0, 'Categorie' => 1, 'Info' => 2, 'Username' => 3, 'Password' => 4, ),
+        self::TYPE_CAMELNAME     => array('mentorId' => 0, 'categorie' => 1, 'info' => 2, 'username' => 3, 'password' => 4, ),
+        self::TYPE_COLNAME       => array(MentorTableMap::COL_MENTOR_ID => 0, MentorTableMap::COL_CATEGORIE => 1, MentorTableMap::COL_INFO => 2, MentorTableMap::COL_USERNAME => 3, MentorTableMap::COL_PASSWORD => 4, ),
+        self::TYPE_FIELDNAME     => array('mentor_id' => 0, 'categorie' => 1, 'info' => 2, 'username' => 3, 'password' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -137,8 +147,10 @@ class MentorTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('mentor_id', 'MentorId', 'INTEGER', true, null, null);
-        $this->addForeignKey('categorie', 'Categorie', 'INTEGER', 'category', 'categorie_id', true, null, null);
+        $this->addForeignKey('categorie', 'Categorie', 'INTEGER', 'category', 'categorie_id', false, null, null);
         $this->addForeignKey('info', 'Info', 'INTEGER', 'user_info', 'user_id', true, null, null);
+        $this->addColumn('username', 'Username', 'VARCHAR', false, 45, null);
+        $this->addColumn('password', 'Password', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -152,7 +164,7 @@ class MentorTableMap extends TableMap
     0 => ':categorie',
     1 => ':categorie_id',
   ),
-), null, null, null, false);
+), 'SET NULL', null, null, false);
         $this->addRelation('UserInfo', '\\UserInfo', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
@@ -166,15 +178,25 @@ class MentorTableMap extends TableMap
     0 => ':men',
     1 => ':mentor_id',
   ),
-), null, null, 'Customers', false);
+), 'SET NULL', null, 'Customers', false);
         $this->addRelation('Schedule', '\\Schedule', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Mentor_id',
     1 => ':mentor_id',
   ),
-), null, null, 'Schedules', false);
+), 'CASCADE', null, 'Schedules', false);
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to mentor     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        CustomerTableMap::clearInstancePool();
+        ScheduleTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -320,10 +342,14 @@ class MentorTableMap extends TableMap
             $criteria->addSelectColumn(MentorTableMap::COL_MENTOR_ID);
             $criteria->addSelectColumn(MentorTableMap::COL_CATEGORIE);
             $criteria->addSelectColumn(MentorTableMap::COL_INFO);
+            $criteria->addSelectColumn(MentorTableMap::COL_USERNAME);
+            $criteria->addSelectColumn(MentorTableMap::COL_PASSWORD);
         } else {
             $criteria->addSelectColumn($alias . '.mentor_id');
             $criteria->addSelectColumn($alias . '.categorie');
             $criteria->addSelectColumn($alias . '.info');
+            $criteria->addSelectColumn($alias . '.username');
+            $criteria->addSelectColumn($alias . '.password');
         }
     }
 

@@ -59,7 +59,7 @@ class QuestionsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class QuestionsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the question_id field
@@ -82,19 +82,9 @@ class QuestionsTableMap extends TableMap
     const COL_QUESTION = 'questions.question';
 
     /**
-     * the column name for the response field
-     */
-    const COL_RESPONSE = 'questions.response';
-
-    /**
      * the column name for the Category_id field
      */
     const COL_CATEGORY_ID = 'questions.Category_id';
-
-    /**
-     * the column name for the answered field
-     */
-    const COL_ANSWERED = 'questions.answered';
 
     /**
      * the column name for the datecreated field
@@ -113,11 +103,11 @@ class QuestionsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('QuestionId', 'Question', 'Response', 'CategoryId', 'Answered', 'Datecreated', ),
-        self::TYPE_CAMELNAME     => array('questionId', 'question', 'response', 'categoryId', 'answered', 'datecreated', ),
-        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_QUESTION_ID, QuestionsTableMap::COL_QUESTION, QuestionsTableMap::COL_RESPONSE, QuestionsTableMap::COL_CATEGORY_ID, QuestionsTableMap::COL_ANSWERED, QuestionsTableMap::COL_DATECREATED, ),
-        self::TYPE_FIELDNAME     => array('question_id', 'question', 'response', 'Category_id', 'answered', 'datecreated', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('QuestionId', 'Question', 'CategoryId', 'Datecreated', ),
+        self::TYPE_CAMELNAME     => array('questionId', 'question', 'categoryId', 'datecreated', ),
+        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_QUESTION_ID, QuestionsTableMap::COL_QUESTION, QuestionsTableMap::COL_CATEGORY_ID, QuestionsTableMap::COL_DATECREATED, ),
+        self::TYPE_FIELDNAME     => array('question_id', 'question', 'Category_id', 'datecreated', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -127,11 +117,11 @@ class QuestionsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('QuestionId' => 0, 'Question' => 1, 'Response' => 2, 'CategoryId' => 3, 'Answered' => 4, 'Datecreated' => 5, ),
-        self::TYPE_CAMELNAME     => array('questionId' => 0, 'question' => 1, 'response' => 2, 'categoryId' => 3, 'answered' => 4, 'datecreated' => 5, ),
-        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_QUESTION_ID => 0, QuestionsTableMap::COL_QUESTION => 1, QuestionsTableMap::COL_RESPONSE => 2, QuestionsTableMap::COL_CATEGORY_ID => 3, QuestionsTableMap::COL_ANSWERED => 4, QuestionsTableMap::COL_DATECREATED => 5, ),
-        self::TYPE_FIELDNAME     => array('question_id' => 0, 'question' => 1, 'response' => 2, 'Category_id' => 3, 'answered' => 4, 'datecreated' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('QuestionId' => 0, 'Question' => 1, 'CategoryId' => 2, 'Datecreated' => 3, ),
+        self::TYPE_CAMELNAME     => array('questionId' => 0, 'question' => 1, 'categoryId' => 2, 'datecreated' => 3, ),
+        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_QUESTION_ID => 0, QuestionsTableMap::COL_QUESTION => 1, QuestionsTableMap::COL_CATEGORY_ID => 2, QuestionsTableMap::COL_DATECREATED => 3, ),
+        self::TYPE_FIELDNAME     => array('question_id' => 0, 'question' => 1, 'Category_id' => 2, 'datecreated' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -153,9 +143,7 @@ class QuestionsTableMap extends TableMap
         // columns
         $this->addPrimaryKey('question_id', 'QuestionId', 'INTEGER', true, null, null);
         $this->addColumn('question', 'Question', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('response', 'Response', 'LONGVARCHAR', false, null, null);
         $this->addForeignKey('Category_id', 'CategoryId', 'INTEGER', 'category', 'categorie_id', true, null, null);
-        $this->addColumn('answered', 'Answered', 'BOOLEAN', false, 1, null);
         $this->addColumn('datecreated', 'Datecreated', 'TIMESTAMP', false, null, null);
     } // initialize()
 
@@ -171,22 +159,23 @@ class QuestionsTableMap extends TableMap
     1 => ':categorie_id',
   ),
 ), 'CASCADE', null, null, false);
-        $this->addRelation('CustomerHasQuestions', '\\CustomerHasQuestions', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('AnsweredQuestions', '\\AnsweredQuestions', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':Questions_id',
+    0 => ':Question_id',
     1 => ':question_id',
   ),
-), null, null, 'CustomerHasQuestionss', false);
-        $this->addRelation('Media', '\\Media', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':question_id',
-    1 => ':question_id',
-  ),
-), null, null, 'Medias', false);
-        $this->addRelation('Customer', '\\Customer', RelationMap::MANY_TO_MANY, array(), null, null, 'Customers');
+), 'CASCADE', null, 'AnsweredQuestionss', false);
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to questions     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        AnsweredQuestionsTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -331,16 +320,12 @@ class QuestionsTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(QuestionsTableMap::COL_QUESTION_ID);
             $criteria->addSelectColumn(QuestionsTableMap::COL_QUESTION);
-            $criteria->addSelectColumn(QuestionsTableMap::COL_RESPONSE);
             $criteria->addSelectColumn(QuestionsTableMap::COL_CATEGORY_ID);
-            $criteria->addSelectColumn(QuestionsTableMap::COL_ANSWERED);
             $criteria->addSelectColumn(QuestionsTableMap::COL_DATECREATED);
         } else {
             $criteria->addSelectColumn($alias . '.question_id');
             $criteria->addSelectColumn($alias . '.question');
-            $criteria->addSelectColumn($alias . '.response');
             $criteria->addSelectColumn($alias . '.Category_id');
-            $criteria->addSelectColumn($alias . '.answered');
             $criteria->addSelectColumn($alias . '.datecreated');
         }
     }

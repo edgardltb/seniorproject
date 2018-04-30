@@ -703,9 +703,10 @@ abstract class Category implements ActiveRecordInterface
 
             if ($this->mentorsScheduledForDeletion !== null) {
                 if (!$this->mentorsScheduledForDeletion->isEmpty()) {
-                    \MentorQuery::create()
-                        ->filterByPrimaryKeys($this->mentorsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
+                    foreach ($this->mentorsScheduledForDeletion as $mentor) {
+                        // need to save related object because we set the relation to null
+                        $mentor->save($con);
+                    }
                     $this->mentorsScheduledForDeletion = null;
                 }
             }
@@ -1734,7 +1735,7 @@ abstract class Category implements ActiveRecordInterface
                 $this->mentorsScheduledForDeletion = clone $this->collMentors;
                 $this->mentorsScheduledForDeletion->clear();
             }
-            $this->mentorsScheduledForDeletion[]= clone $mentor;
+            $this->mentorsScheduledForDeletion[]= $mentor;
             $mentor->setCategory(null);
         }
 

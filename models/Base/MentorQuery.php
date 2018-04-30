@@ -23,10 +23,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMentorQuery orderByMentorId($order = Criteria::ASC) Order by the mentor_id column
  * @method     ChildMentorQuery orderByCategorie($order = Criteria::ASC) Order by the categorie column
  * @method     ChildMentorQuery orderByInfo($order = Criteria::ASC) Order by the info column
+ * @method     ChildMentorQuery orderByUsername($order = Criteria::ASC) Order by the username column
+ * @method     ChildMentorQuery orderByPassword($order = Criteria::ASC) Order by the password column
  *
  * @method     ChildMentorQuery groupByMentorId() Group by the mentor_id column
  * @method     ChildMentorQuery groupByCategorie() Group by the categorie column
  * @method     ChildMentorQuery groupByInfo() Group by the info column
+ * @method     ChildMentorQuery groupByUsername() Group by the username column
+ * @method     ChildMentorQuery groupByPassword() Group by the password column
  *
  * @method     ChildMentorQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildMentorQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -83,7 +87,9 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildMentor findOneByMentorId(int $mentor_id) Return the first ChildMentor filtered by the mentor_id column
  * @method     ChildMentor findOneByCategorie(int $categorie) Return the first ChildMentor filtered by the categorie column
- * @method     ChildMentor findOneByInfo(int $info) Return the first ChildMentor filtered by the info column *
+ * @method     ChildMentor findOneByInfo(int $info) Return the first ChildMentor filtered by the info column
+ * @method     ChildMentor findOneByUsername(string $username) Return the first ChildMentor filtered by the username column
+ * @method     ChildMentor findOneByPassword(string $password) Return the first ChildMentor filtered by the password column *
 
  * @method     ChildMentor requirePk($key, ConnectionInterface $con = null) Return the ChildMentor by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMentor requireOne(ConnectionInterface $con = null) Return the first ChildMentor matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -91,11 +97,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMentor requireOneByMentorId(int $mentor_id) Return the first ChildMentor filtered by the mentor_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMentor requireOneByCategorie(int $categorie) Return the first ChildMentor filtered by the categorie column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMentor requireOneByInfo(int $info) Return the first ChildMentor filtered by the info column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildMentor requireOneByUsername(string $username) Return the first ChildMentor filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildMentor requireOneByPassword(string $password) Return the first ChildMentor filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildMentor[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildMentor objects based on current ModelCriteria
  * @method     ChildMentor[]|ObjectCollection findByMentorId(int $mentor_id) Return ChildMentor objects filtered by the mentor_id column
  * @method     ChildMentor[]|ObjectCollection findByCategorie(int $categorie) Return ChildMentor objects filtered by the categorie column
  * @method     ChildMentor[]|ObjectCollection findByInfo(int $info) Return ChildMentor objects filtered by the info column
+ * @method     ChildMentor[]|ObjectCollection findByUsername(string $username) Return ChildMentor objects filtered by the username column
+ * @method     ChildMentor[]|ObjectCollection findByPassword(string $password) Return ChildMentor objects filtered by the password column
  * @method     ChildMentor[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -194,7 +204,7 @@ abstract class MentorQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT mentor_id, categorie, info FROM mentor WHERE mentor_id = :p0';
+        $sql = 'SELECT mentor_id, categorie, info, username, password FROM mentor WHERE mentor_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -412,6 +422,56 @@ abstract class MentorQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the username column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByUsername('%fooValue%', Criteria::LIKE); // WHERE username LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $username The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildMentorQuery The current query, for fluid interface
+     */
+    public function filterByUsername($username = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($username)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(MentorTableMap::COL_USERNAME, $username, $comparison);
+    }
+
+    /**
+     * Filter the query on the password column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPassword('fooValue');   // WHERE password = 'fooValue'
+     * $query->filterByPassword('%fooValue%', Criteria::LIKE); // WHERE password LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $password The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildMentorQuery The current query, for fluid interface
+     */
+    public function filterByPassword($password = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($password)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(MentorTableMap::COL_PASSWORD, $password, $comparison);
+    }
+
+    /**
      * Filter the query by a related \Category object
      *
      * @param \Category|ObjectCollection $category The related object(s) to use as filter
@@ -446,7 +506,7 @@ abstract class MentorQuery extends ModelCriteria
      *
      * @return $this|ChildMentorQuery The current query, for fluid interface
      */
-    public function joinCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinCategory($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Category');
@@ -481,7 +541,7 @@ abstract class MentorQuery extends ModelCriteria
      *
      * @return \CategoryQuery A secondary query class using the current class as primary query
      */
-    public function useCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useCategoryQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinCategory($relationAlias, $joinType)

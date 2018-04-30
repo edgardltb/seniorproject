@@ -77,14 +77,14 @@ class ScheduleTableMap extends TableMap
     const COL_SCHEDULE_ID = 'schedule.schedule_id';
 
     /**
-     * the column name for the time field
+     * the column name for the start_time field
      */
-    const COL_TIME = 'schedule.time';
+    const COL_START_TIME = 'schedule.start_time';
 
     /**
-     * the column name for the datemade field
+     * the column name for the end_time field
      */
-    const COL_DATEMADE = 'schedule.datemade';
+    const COL_END_TIME = 'schedule.end_time';
 
     /**
      * the column name for the Mentor_id field
@@ -113,10 +113,10 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('ScheduleId', 'Time', 'Datemade', 'MentorId', 'CustomerId', 'Room', ),
-        self::TYPE_CAMELNAME     => array('scheduleId', 'time', 'datemade', 'mentorId', 'customerId', 'room', ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_SCHEDULE_ID, ScheduleTableMap::COL_TIME, ScheduleTableMap::COL_DATEMADE, ScheduleTableMap::COL_MENTOR_ID, ScheduleTableMap::COL_CUSTOMER_ID, ScheduleTableMap::COL_ROOM, ),
-        self::TYPE_FIELDNAME     => array('schedule_id', 'time', 'datemade', 'Mentor_id', 'Customer_id', 'room', ),
+        self::TYPE_PHPNAME       => array('ScheduleId', 'StartTime', 'EndTime', 'MentorId', 'CustomerId', 'Room', ),
+        self::TYPE_CAMELNAME     => array('scheduleId', 'startTime', 'endTime', 'mentorId', 'customerId', 'room', ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_SCHEDULE_ID, ScheduleTableMap::COL_START_TIME, ScheduleTableMap::COL_END_TIME, ScheduleTableMap::COL_MENTOR_ID, ScheduleTableMap::COL_CUSTOMER_ID, ScheduleTableMap::COL_ROOM, ),
+        self::TYPE_FIELDNAME     => array('schedule_id', 'start_time', 'end_time', 'Mentor_id', 'Customer_id', 'room', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -127,10 +127,10 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('ScheduleId' => 0, 'Time' => 1, 'Datemade' => 2, 'MentorId' => 3, 'CustomerId' => 4, 'Room' => 5, ),
-        self::TYPE_CAMELNAME     => array('scheduleId' => 0, 'time' => 1, 'datemade' => 2, 'mentorId' => 3, 'customerId' => 4, 'room' => 5, ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_SCHEDULE_ID => 0, ScheduleTableMap::COL_TIME => 1, ScheduleTableMap::COL_DATEMADE => 2, ScheduleTableMap::COL_MENTOR_ID => 3, ScheduleTableMap::COL_CUSTOMER_ID => 4, ScheduleTableMap::COL_ROOM => 5, ),
-        self::TYPE_FIELDNAME     => array('schedule_id' => 0, 'time' => 1, 'datemade' => 2, 'Mentor_id' => 3, 'Customer_id' => 4, 'room' => 5, ),
+        self::TYPE_PHPNAME       => array('ScheduleId' => 0, 'StartTime' => 1, 'EndTime' => 2, 'MentorId' => 3, 'CustomerId' => 4, 'Room' => 5, ),
+        self::TYPE_CAMELNAME     => array('scheduleId' => 0, 'startTime' => 1, 'endTime' => 2, 'mentorId' => 3, 'customerId' => 4, 'room' => 5, ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_SCHEDULE_ID => 0, ScheduleTableMap::COL_START_TIME => 1, ScheduleTableMap::COL_END_TIME => 2, ScheduleTableMap::COL_MENTOR_ID => 3, ScheduleTableMap::COL_CUSTOMER_ID => 4, ScheduleTableMap::COL_ROOM => 5, ),
+        self::TYPE_FIELDNAME     => array('schedule_id' => 0, 'start_time' => 1, 'end_time' => 2, 'Mentor_id' => 3, 'Customer_id' => 4, 'room' => 5, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
@@ -152,11 +152,11 @@ class ScheduleTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('schedule_id', 'ScheduleId', 'INTEGER', true, null, null);
-        $this->addColumn('time', 'Time', 'TIMESTAMP', false, null, null);
-        $this->addColumn('datemade', 'Datemade', 'TIMESTAMP', false, null, null);
+        $this->addColumn('start_time', 'StartTime', 'TIMESTAMP', true, null, null);
+        $this->addColumn('end_time', 'EndTime', 'TIMESTAMP', false, null, null);
         $this->addForeignPrimaryKey('Mentor_id', 'MentorId', 'INTEGER' , 'mentor', 'mentor_id', true, null, null);
         $this->addForeignPrimaryKey('Customer_id', 'CustomerId', 'INTEGER' , 'customer', 'customer_id', true, null, null);
-        $this->addColumn('room', 'Room', 'INTEGER', false, null, null);
+        $this->addColumn('room', 'Room', 'INTEGER', true, null, null);
     } // initialize()
 
     /**
@@ -170,14 +170,14 @@ class ScheduleTableMap extends TableMap
     0 => ':Customer_id',
     1 => ':customer_id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('Mentor', '\\Mentor', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':Mentor_id',
     1 => ':mentor_id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**
@@ -389,15 +389,15 @@ class ScheduleTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ScheduleTableMap::COL_SCHEDULE_ID);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_TIME);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_DATEMADE);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_START_TIME);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_END_TIME);
             $criteria->addSelectColumn(ScheduleTableMap::COL_MENTOR_ID);
             $criteria->addSelectColumn(ScheduleTableMap::COL_CUSTOMER_ID);
             $criteria->addSelectColumn(ScheduleTableMap::COL_ROOM);
         } else {
             $criteria->addSelectColumn($alias . '.schedule_id');
-            $criteria->addSelectColumn($alias . '.time');
-            $criteria->addSelectColumn($alias . '.datemade');
+            $criteria->addSelectColumn($alias . '.start_time');
+            $criteria->addSelectColumn($alias . '.end_time');
             $criteria->addSelectColumn($alias . '.Mentor_id');
             $criteria->addSelectColumn($alias . '.Customer_id');
             $criteria->addSelectColumn($alias . '.room');

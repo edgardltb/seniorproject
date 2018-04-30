@@ -2,17 +2,20 @@
 
 namespace Base;
 
+use \AnsweredQuestions as ChildAnsweredQuestions;
+use \AnsweredQuestionsQuery as ChildAnsweredQuestionsQuery;
+use \Media as ChildMedia;
 use \MediaQuery as ChildMediaQuery;
-use \Questions as ChildQuestions;
-use \QuestionsQuery as ChildQuestionsQuery;
 use \Exception;
 use \PDO;
+use Map\AnsweredQuestionsTableMap;
 use Map\MediaTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -83,16 +86,10 @@ abstract class Media implements ActiveRecordInterface
     protected $link;
 
     /**
-     * The value for the question_id field.
-     *
-     * @var        int
+     * @var        ObjectCollection|ChildAnsweredQuestions[] Collection to store aggregation of ChildAnsweredQuestions objects.
      */
-    protected $question_id;
-
-    /**
-     * @var        ChildQuestions
-     */
-    protected $aQuestions;
+    protected $collAnsweredQuestionss;
+    protected $collAnsweredQuestionssPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -101,6 +98,12 @@ abstract class Media implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildAnsweredQuestions[]
+     */
+    protected $answeredQuestionssScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Base\Media object.
@@ -368,16 +371,6 @@ abstract class Media implements ActiveRecordInterface
     }
 
     /**
-     * Get the [question_id] column value.
-     *
-     * @return int
-     */
-    public function getQuestionId()
-    {
-        return $this->question_id;
-    }
-
-    /**
      * Set the value of [media_id] column.
      *
      * @param int $v new value
@@ -446,30 +439,6 @@ abstract class Media implements ActiveRecordInterface
     } // setLink()
 
     /**
-     * Set the value of [question_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Media The current object (for fluent API support)
-     */
-    public function setQuestionId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->question_id !== $v) {
-            $this->question_id = $v;
-            $this->modifiedColumns[MediaTableMap::COL_QUESTION_ID] = true;
-        }
-
-        if ($this->aQuestions !== null && $this->aQuestions->getQuestionId() !== $v) {
-            $this->aQuestions = null;
-        }
-
-        return $this;
-    } // setQuestionId()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -513,9 +482,6 @@ abstract class Media implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MediaTableMap::translateFieldName('Link', TableMap::TYPE_PHPNAME, $indexType)];
             $this->link = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : MediaTableMap::translateFieldName('QuestionId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->question_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -524,7 +490,7 @@ abstract class Media implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = MediaTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = MediaTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Media'), 0, $e);
@@ -546,9 +512,6 @@ abstract class Media implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aQuestions !== null && $this->question_id !== $this->aQuestions->getQuestionId()) {
-            $this->aQuestions = null;
-        }
     } // ensureConsistency
 
     /**
@@ -588,7 +551,8 @@ abstract class Media implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aQuestions = null;
+            $this->collAnsweredQuestionss = null;
+
         } // if (deep)
     }
 
@@ -692,18 +656,6 @@ abstract class Media implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aQuestions !== null) {
-                if ($this->aQuestions->isModified() || $this->aQuestions->isNew()) {
-                    $affectedRows += $this->aQuestions->save($con);
-                }
-                $this->setQuestions($this->aQuestions);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -713,6 +665,23 @@ abstract class Media implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->answeredQuestionssScheduledForDeletion !== null) {
+                if (!$this->answeredQuestionssScheduledForDeletion->isEmpty()) {
+                    \AnsweredQuestionsQuery::create()
+                        ->filterByPrimaryKeys($this->answeredQuestionssScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->answeredQuestionssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collAnsweredQuestionss !== null) {
+                foreach ($this->collAnsweredQuestionss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -750,9 +719,6 @@ abstract class Media implements ActiveRecordInterface
         if ($this->isColumnModified(MediaTableMap::COL_LINK)) {
             $modifiedColumns[':p' . $index++]  = 'link';
         }
-        if ($this->isColumnModified(MediaTableMap::COL_QUESTION_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'question_id';
-        }
 
         $sql = sprintf(
             'INSERT INTO media (%s) VALUES (%s)',
@@ -772,9 +738,6 @@ abstract class Media implements ActiveRecordInterface
                         break;
                     case 'link':
                         $stmt->bindValue($identifier, $this->link, PDO::PARAM_STR);
-                        break;
-                    case 'question_id':
-                        $stmt->bindValue($identifier, $this->question_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -847,9 +810,6 @@ abstract class Media implements ActiveRecordInterface
             case 2:
                 return $this->getLink();
                 break;
-            case 3:
-                return $this->getQuestionId();
-                break;
             default:
                 return null;
                 break;
@@ -883,7 +843,6 @@ abstract class Media implements ActiveRecordInterface
             $keys[0] => $this->getMediaId(),
             $keys[1] => $this->getVideo(),
             $keys[2] => $this->getLink(),
-            $keys[3] => $this->getQuestionId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -891,20 +850,20 @@ abstract class Media implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aQuestions) {
+            if (null !== $this->collAnsweredQuestionss) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'questions';
+                        $key = 'answeredQuestionss';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'questions';
+                        $key = 'answered_questionss';
                         break;
                     default:
-                        $key = 'Questions';
+                        $key = 'AnsweredQuestionss';
                 }
 
-                $result[$key] = $this->aQuestions->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->collAnsweredQuestionss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -949,9 +908,6 @@ abstract class Media implements ActiveRecordInterface
             case 2:
                 $this->setLink($value);
                 break;
-            case 3:
-                $this->setQuestionId($value);
-                break;
         } // switch()
 
         return $this;
@@ -986,9 +942,6 @@ abstract class Media implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setLink($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setQuestionId($arr[$keys[3]]);
         }
     }
 
@@ -1039,9 +992,6 @@ abstract class Media implements ActiveRecordInterface
         }
         if ($this->isColumnModified(MediaTableMap::COL_LINK)) {
             $criteria->add(MediaTableMap::COL_LINK, $this->link);
-        }
-        if ($this->isColumnModified(MediaTableMap::COL_QUESTION_ID)) {
-            $criteria->add(MediaTableMap::COL_QUESTION_ID, $this->question_id);
         }
 
         return $criteria;
@@ -1131,7 +1081,20 @@ abstract class Media implements ActiveRecordInterface
     {
         $copyObj->setVideo($this->getVideo());
         $copyObj->setLink($this->getLink());
-        $copyObj->setQuestionId($this->getQuestionId());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getAnsweredQuestionss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addAnsweredQuestions($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setMediaId(NULL); // this is a auto-increment column, so set to default value
@@ -1160,55 +1123,296 @@ abstract class Media implements ActiveRecordInterface
         return $copyObj;
     }
 
+
     /**
-     * Declares an association between this object and a ChildQuestions object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param  ChildQuestions $v
-     * @return $this|\Media The current object (for fluent API support)
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('AnsweredQuestions' == $relationName) {
+            $this->initAnsweredQuestionss();
+            return;
+        }
+    }
+
+    /**
+     * Clears out the collAnsweredQuestionss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addAnsweredQuestionss()
+     */
+    public function clearAnsweredQuestionss()
+    {
+        $this->collAnsweredQuestionss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collAnsweredQuestionss collection loaded partially.
+     */
+    public function resetPartialAnsweredQuestionss($v = true)
+    {
+        $this->collAnsweredQuestionssPartial = $v;
+    }
+
+    /**
+     * Initializes the collAnsweredQuestionss collection.
+     *
+     * By default this just sets the collAnsweredQuestionss collection to an empty array (like clearcollAnsweredQuestionss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initAnsweredQuestionss($overrideExisting = true)
+    {
+        if (null !== $this->collAnsweredQuestionss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = AnsweredQuestionsTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collAnsweredQuestionss = new $collectionClassName;
+        $this->collAnsweredQuestionss->setModel('\AnsweredQuestions');
+    }
+
+    /**
+     * Gets an array of ChildAnsweredQuestions objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildMedia is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
      * @throws PropelException
      */
-    public function setQuestions(ChildQuestions $v = null)
+    public function getAnsweredQuestionss(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        if ($v === null) {
-            $this->setQuestionId(NULL);
-        } else {
-            $this->setQuestionId($v->getQuestionId());
+        $partial = $this->collAnsweredQuestionssPartial && !$this->isNew();
+        if (null === $this->collAnsweredQuestionss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collAnsweredQuestionss) {
+                // return empty collection
+                $this->initAnsweredQuestionss();
+            } else {
+                $collAnsweredQuestionss = ChildAnsweredQuestionsQuery::create(null, $criteria)
+                    ->filterByMedia($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collAnsweredQuestionssPartial && count($collAnsweredQuestionss)) {
+                        $this->initAnsweredQuestionss(false);
+
+                        foreach ($collAnsweredQuestionss as $obj) {
+                            if (false == $this->collAnsweredQuestionss->contains($obj)) {
+                                $this->collAnsweredQuestionss->append($obj);
+                            }
+                        }
+
+                        $this->collAnsweredQuestionssPartial = true;
+                    }
+
+                    return $collAnsweredQuestionss;
+                }
+
+                if ($partial && $this->collAnsweredQuestionss) {
+                    foreach ($this->collAnsweredQuestionss as $obj) {
+                        if ($obj->isNew()) {
+                            $collAnsweredQuestionss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collAnsweredQuestionss = $collAnsweredQuestionss;
+                $this->collAnsweredQuestionssPartial = false;
+            }
         }
 
-        $this->aQuestions = $v;
+        return $this->collAnsweredQuestionss;
+    }
 
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildQuestions object, it will not be re-added.
-        if ($v !== null) {
-            $v->addMedia($this);
+    /**
+     * Sets a collection of ChildAnsweredQuestions objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $answeredQuestionss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildMedia The current object (for fluent API support)
+     */
+    public function setAnsweredQuestionss(Collection $answeredQuestionss, ConnectionInterface $con = null)
+    {
+        /** @var ChildAnsweredQuestions[] $answeredQuestionssToDelete */
+        $answeredQuestionssToDelete = $this->getAnsweredQuestionss(new Criteria(), $con)->diff($answeredQuestionss);
+
+
+        $this->answeredQuestionssScheduledForDeletion = $answeredQuestionssToDelete;
+
+        foreach ($answeredQuestionssToDelete as $answeredQuestionsRemoved) {
+            $answeredQuestionsRemoved->setMedia(null);
         }
 
+        $this->collAnsweredQuestionss = null;
+        foreach ($answeredQuestionss as $answeredQuestions) {
+            $this->addAnsweredQuestions($answeredQuestions);
+        }
+
+        $this->collAnsweredQuestionss = $answeredQuestionss;
+        $this->collAnsweredQuestionssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related AnsweredQuestions objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related AnsweredQuestions objects.
+     * @throws PropelException
+     */
+    public function countAnsweredQuestionss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collAnsweredQuestionssPartial && !$this->isNew();
+        if (null === $this->collAnsweredQuestionss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collAnsweredQuestionss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getAnsweredQuestionss());
+            }
+
+            $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByMedia($this)
+                ->count($con);
+        }
+
+        return count($this->collAnsweredQuestionss);
+    }
+
+    /**
+     * Method called to associate a ChildAnsweredQuestions object to this object
+     * through the ChildAnsweredQuestions foreign key attribute.
+     *
+     * @param  ChildAnsweredQuestions $l ChildAnsweredQuestions
+     * @return $this|\Media The current object (for fluent API support)
+     */
+    public function addAnsweredQuestions(ChildAnsweredQuestions $l)
+    {
+        if ($this->collAnsweredQuestionss === null) {
+            $this->initAnsweredQuestionss();
+            $this->collAnsweredQuestionssPartial = true;
+        }
+
+        if (!$this->collAnsweredQuestionss->contains($l)) {
+            $this->doAddAnsweredQuestions($l);
+
+            if ($this->answeredQuestionssScheduledForDeletion and $this->answeredQuestionssScheduledForDeletion->contains($l)) {
+                $this->answeredQuestionssScheduledForDeletion->remove($this->answeredQuestionssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildAnsweredQuestions $answeredQuestions The ChildAnsweredQuestions object to add.
+     */
+    protected function doAddAnsweredQuestions(ChildAnsweredQuestions $answeredQuestions)
+    {
+        $this->collAnsweredQuestionss[]= $answeredQuestions;
+        $answeredQuestions->setMedia($this);
+    }
+
+    /**
+     * @param  ChildAnsweredQuestions $answeredQuestions The ChildAnsweredQuestions object to remove.
+     * @return $this|ChildMedia The current object (for fluent API support)
+     */
+    public function removeAnsweredQuestions(ChildAnsweredQuestions $answeredQuestions)
+    {
+        if ($this->getAnsweredQuestionss()->contains($answeredQuestions)) {
+            $pos = $this->collAnsweredQuestionss->search($answeredQuestions);
+            $this->collAnsweredQuestionss->remove($pos);
+            if (null === $this->answeredQuestionssScheduledForDeletion) {
+                $this->answeredQuestionssScheduledForDeletion = clone $this->collAnsweredQuestionss;
+                $this->answeredQuestionssScheduledForDeletion->clear();
+            }
+            $this->answeredQuestionssScheduledForDeletion[]= $answeredQuestions;
+            $answeredQuestions->setMedia(null);
+        }
 
         return $this;
     }
 
 
     /**
-     * Get the associated ChildQuestions object
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Media is new, it will return
+     * an empty collection; or if this Media has previously
+     * been saved, it will retrieve related AnsweredQuestionss from storage.
      *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildQuestions The associated ChildQuestions object.
-     * @throws PropelException
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Media.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
      */
-    public function getQuestions(ConnectionInterface $con = null)
+    public function getAnsweredQuestionssJoinCustomer(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        if ($this->aQuestions === null && ($this->question_id != 0)) {
-            $this->aQuestions = ChildQuestionsQuery::create()->findPk($this->question_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aQuestions->addMedias($this);
-             */
-        }
+        $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
+        $query->joinWith('Customer', $joinBehavior);
 
-        return $this->aQuestions;
+        return $this->getAnsweredQuestionss($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Media is new, it will return
+     * an empty collection; or if this Media has previously
+     * been saved, it will retrieve related AnsweredQuestionss from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Media.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildAnsweredQuestions[] List of ChildAnsweredQuestions objects
+     */
+    public function getAnsweredQuestionssJoinQuestions(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildAnsweredQuestionsQuery::create(null, $criteria);
+        $query->joinWith('Questions', $joinBehavior);
+
+        return $this->getAnsweredQuestionss($query, $con);
     }
 
     /**
@@ -1218,13 +1422,9 @@ abstract class Media implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aQuestions) {
-            $this->aQuestions->removeMedia($this);
-        }
         $this->media_id = null;
         $this->video = null;
         $this->link = null;
-        $this->question_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1243,9 +1443,14 @@ abstract class Media implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collAnsweredQuestionss) {
+                foreach ($this->collAnsweredQuestionss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
-        $this->aQuestions = null;
+        $this->collAnsweredQuestionss = null;
     }
 
     /**

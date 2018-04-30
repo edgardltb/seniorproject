@@ -1,42 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Store Management System</title>
 
-    <title>Hello, world!</title>
-  </head>
-  <body>
-    
-    <div class="panel panel-default question">
-      <div class="panel-heading">Question</div>
-      <div class="panel-body">
-        <p>This the answer of the questions</p>
-        <div class="form-group ans" style="display:none">
-          <label for="">Answer</label>
-          <textarea class="form-control" name="" id="" rows="3"></textarea>
-          <button type="button" class="btn btn-primary ansButton">Answer</button>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myInverseNavbar2" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Welcome</a>
+      </div>
+      <a class="navbar-brand navbar-right" id="logout" href="Logout.php">Logout</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+
+    <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="container">
+        <div class="jumbotron">
+          <h1>Store Management System</h1>
         </div>
-
-
-
       </div>
     </div>
-    
-      
+  </div>
+  <hr>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-9 col-md-12">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="thumbnail">
+              <div class="caption">
+                <h3>Customers</h3>
+                <p>View the Customers Attending store</p>
+                <hr>
+                <p class="text-center">
+                  <a href="table.php?customers=true&view=true" class="btn btn-success" role="button">Enter</a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+            <div class="thumbnail">
+              <div class="caption">
+                <h3>Stores</h3>
+                <p>View and edit Stores</p>
+                <hr>
+                <p class="text-center">
+                  <a href="table.php?stores=true&view=true" class="btn btn-info" role="button">Enter</a>
+                </p>
+              </div>
+            </div>
+          </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/bootstrap/css/bootstrap.min.css"></script>
-    <script src="assets/js/schedule.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+        </div>
+      </div>
+      <div class="col-lg-3 col-lg-offset-0 col-md-offset-0 col-md-4">
+        <div class="well">
+          <h3 class="text-center">Menu</h3>
+        </div>
+        <div class="list-group">
+          <a href="table.php" class="list-group-item <?php echo ($table == 'home' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Home</h4>
+          </a>
+          <a href="table.php?customers=true&view=true" class="list-group-item <?php echo ($table == 'customers' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Customer</h4>
+          </a>
+          <a href="table.php?stores=true&view=true" class="list-group-item <?php echo ($table == 'stores' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Stores</h4>
+          </a>
+          <a href="table.php?employees=true&view=true" class="list-group-item <?php echo ($table == 'employees' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Employees</h4>
+          </a>
+          <a href="table.php?items=true&view=true" class="list-group-item <?php echo ($table == 'items' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Items</h4>
+          </a>
+          <a href="table.php?positions=true&view=true" class="list-group-item <?php echo ($table == 'positions' ? ' active' : '');?>">
+            <h4 class="list-group-item-heading">Store Postions</h4>
+            <a href="table.php?orders=true" class="list-group-item <?php echo ($table == 'orders' ? ' active' : '');?>">
+              <h4 class="list-group-item-heading">Orders</h4>
+            </a>
+            <a class="list-group-item disabled">
+              <h4 class="list-group-item-heading">&nbsp;</h4>
+            </a>
+        </div>
+        <hr>
+        <div class="media-object-default">
+          <div class="media">
+            <div class="media-left">
+              <a href="#"> </a>
+            </div>
+          </div>
+          <div class="media">
+            <div class="media-left">
+              <a href="#"> </a>
+            </div>
+            <div class="media-body">
+              <h4 class="media-heading">Adminstrator</h4>
+              <p>Phone: 9568444542</p>
+              <p>
+                <a href="mailto:#">edgardlt@gmail.com</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <footer class="text-center">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <p>Copyright © STore Management system</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="datta"></div>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="assets/js/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  <script type="application/javascript" src="assets/js/script.js"></script>
+
+
+</body>
+
 </html>

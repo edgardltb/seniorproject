@@ -21,10 +21,14 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildAdministratorQuery orderByAdminId($order = Criteria::ASC) Order by the admin_id column
- * @method     ChildAdministratorQuery orderByUserInfoId($order = Criteria::ASC) Order by the user_info_id column
+ * @method     ChildAdministratorQuery orderByInfoId($order = Criteria::ASC) Order by the info_id column
+ * @method     ChildAdministratorQuery orderByUsername($order = Criteria::ASC) Order by the username column
+ * @method     ChildAdministratorQuery orderByPassword($order = Criteria::ASC) Order by the password column
  *
  * @method     ChildAdministratorQuery groupByAdminId() Group by the admin_id column
- * @method     ChildAdministratorQuery groupByUserInfoId() Group by the user_info_id column
+ * @method     ChildAdministratorQuery groupByInfoId() Group by the info_id column
+ * @method     ChildAdministratorQuery groupByUsername() Group by the username column
+ * @method     ChildAdministratorQuery groupByPassword() Group by the password column
  *
  * @method     ChildAdministratorQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildAdministratorQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -50,17 +54,23 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildAdministrator findOneOrCreate(ConnectionInterface $con = null) Return the first ChildAdministrator matching the query, or a new ChildAdministrator object populated from the query conditions when no match is found
  *
  * @method     ChildAdministrator findOneByAdminId(int $admin_id) Return the first ChildAdministrator filtered by the admin_id column
- * @method     ChildAdministrator findOneByUserInfoId(int $user_info_id) Return the first ChildAdministrator filtered by the user_info_id column *
+ * @method     ChildAdministrator findOneByInfoId(int $info_id) Return the first ChildAdministrator filtered by the info_id column
+ * @method     ChildAdministrator findOneByUsername(string $username) Return the first ChildAdministrator filtered by the username column
+ * @method     ChildAdministrator findOneByPassword(string $password) Return the first ChildAdministrator filtered by the password column *
 
  * @method     ChildAdministrator requirePk($key, ConnectionInterface $con = null) Return the ChildAdministrator by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildAdministrator requireOne(ConnectionInterface $con = null) Return the first ChildAdministrator matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildAdministrator requireOneByAdminId(int $admin_id) Return the first ChildAdministrator filtered by the admin_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildAdministrator requireOneByUserInfoId(int $user_info_id) Return the first ChildAdministrator filtered by the user_info_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAdministrator requireOneByInfoId(int $info_id) Return the first ChildAdministrator filtered by the info_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAdministrator requireOneByUsername(string $username) Return the first ChildAdministrator filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildAdministrator requireOneByPassword(string $password) Return the first ChildAdministrator filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildAdministrator[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildAdministrator objects based on current ModelCriteria
  * @method     ChildAdministrator[]|ObjectCollection findByAdminId(int $admin_id) Return ChildAdministrator objects filtered by the admin_id column
- * @method     ChildAdministrator[]|ObjectCollection findByUserInfoId(int $user_info_id) Return ChildAdministrator objects filtered by the user_info_id column
+ * @method     ChildAdministrator[]|ObjectCollection findByInfoId(int $info_id) Return ChildAdministrator objects filtered by the info_id column
+ * @method     ChildAdministrator[]|ObjectCollection findByUsername(string $username) Return ChildAdministrator objects filtered by the username column
+ * @method     ChildAdministrator[]|ObjectCollection findByPassword(string $password) Return ChildAdministrator objects filtered by the password column
  * @method     ChildAdministrator[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -159,7 +169,7 @@ abstract class AdministratorQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT admin_id, user_info_id FROM administrator WHERE admin_id = :p0';
+        $sql = 'SELECT admin_id, info_id, username, password FROM administrator WHERE admin_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -291,18 +301,18 @@ abstract class AdministratorQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_info_id column
+     * Filter the query on the info_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUserInfoId(1234); // WHERE user_info_id = 1234
-     * $query->filterByUserInfoId(array(12, 34)); // WHERE user_info_id IN (12, 34)
-     * $query->filterByUserInfoId(array('min' => 12)); // WHERE user_info_id > 12
+     * $query->filterByInfoId(1234); // WHERE info_id = 1234
+     * $query->filterByInfoId(array(12, 34)); // WHERE info_id IN (12, 34)
+     * $query->filterByInfoId(array('min' => 12)); // WHERE info_id > 12
      * </code>
      *
      * @see       filterByUserInfo()
      *
-     * @param     mixed $userInfoId The value to use as filter.
+     * @param     mixed $infoId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -310,16 +320,16 @@ abstract class AdministratorQuery extends ModelCriteria
      *
      * @return $this|ChildAdministratorQuery The current query, for fluid interface
      */
-    public function filterByUserInfoId($userInfoId = null, $comparison = null)
+    public function filterByInfoId($infoId = null, $comparison = null)
     {
-        if (is_array($userInfoId)) {
+        if (is_array($infoId)) {
             $useMinMax = false;
-            if (isset($userInfoId['min'])) {
-                $this->addUsingAlias(AdministratorTableMap::COL_USER_INFO_ID, $userInfoId['min'], Criteria::GREATER_EQUAL);
+            if (isset($infoId['min'])) {
+                $this->addUsingAlias(AdministratorTableMap::COL_INFO_ID, $infoId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($userInfoId['max'])) {
-                $this->addUsingAlias(AdministratorTableMap::COL_USER_INFO_ID, $userInfoId['max'], Criteria::LESS_EQUAL);
+            if (isset($infoId['max'])) {
+                $this->addUsingAlias(AdministratorTableMap::COL_INFO_ID, $infoId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -330,7 +340,57 @@ abstract class AdministratorQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(AdministratorTableMap::COL_USER_INFO_ID, $userInfoId, $comparison);
+        return $this->addUsingAlias(AdministratorTableMap::COL_INFO_ID, $infoId, $comparison);
+    }
+
+    /**
+     * Filter the query on the username column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByUsername('%fooValue%', Criteria::LIKE); // WHERE username LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $username The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAdministratorQuery The current query, for fluid interface
+     */
+    public function filterByUsername($username = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($username)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AdministratorTableMap::COL_USERNAME, $username, $comparison);
+    }
+
+    /**
+     * Filter the query on the password column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPassword('fooValue');   // WHERE password = 'fooValue'
+     * $query->filterByPassword('%fooValue%', Criteria::LIKE); // WHERE password LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $password The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildAdministratorQuery The current query, for fluid interface
+     */
+    public function filterByPassword($password = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($password)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(AdministratorTableMap::COL_PASSWORD, $password, $comparison);
     }
 
     /**
@@ -347,14 +407,14 @@ abstract class AdministratorQuery extends ModelCriteria
     {
         if ($userInfo instanceof \UserInfo) {
             return $this
-                ->addUsingAlias(AdministratorTableMap::COL_USER_INFO_ID, $userInfo->getUserId(), $comparison);
+                ->addUsingAlias(AdministratorTableMap::COL_INFO_ID, $userInfo->getUserId(), $comparison);
         } elseif ($userInfo instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(AdministratorTableMap::COL_USER_INFO_ID, $userInfo->toKeyValue('PrimaryKey', 'UserId'), $comparison);
+                ->addUsingAlias(AdministratorTableMap::COL_INFO_ID, $userInfo->toKeyValue('PrimaryKey', 'UserId'), $comparison);
         } else {
             throw new PropelException('filterByUserInfo() only accepts arguments of type \UserInfo or Collection');
         }

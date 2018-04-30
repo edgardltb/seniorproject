@@ -93,6 +93,20 @@ abstract class Mentor implements ActiveRecordInterface
     protected $info;
 
     /**
+     * The value for the username field.
+     *
+     * @var        string
+     */
+    protected $username;
+
+    /**
+     * The value for the password field.
+     *
+     * @var        string
+     */
+    protected $password;
+
+    /**
      * @var        ChildCategory
      */
     protected $aCategory;
@@ -390,6 +404,26 @@ abstract class Mentor implements ActiveRecordInterface
     }
 
     /**
+     * Get the [username] column value.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Get the [password] column value.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
      * Set the value of [mentor_id] column.
      *
      * @param int $v new value
@@ -458,6 +492,46 @@ abstract class Mentor implements ActiveRecordInterface
     } // setInfo()
 
     /**
+     * Set the value of [username] column.
+     *
+     * @param string $v new value
+     * @return $this|\Mentor The current object (for fluent API support)
+     */
+    public function setUsername($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->username !== $v) {
+            $this->username = $v;
+            $this->modifiedColumns[MentorTableMap::COL_USERNAME] = true;
+        }
+
+        return $this;
+    } // setUsername()
+
+    /**
+     * Set the value of [password] column.
+     *
+     * @param string $v new value
+     * @return $this|\Mentor The current object (for fluent API support)
+     */
+    public function setPassword($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->password !== $v) {
+            $this->password = $v;
+            $this->modifiedColumns[MentorTableMap::COL_PASSWORD] = true;
+        }
+
+        return $this;
+    } // setPassword()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -501,6 +575,12 @@ abstract class Mentor implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MentorTableMap::translateFieldName('Info', TableMap::TYPE_PHPNAME, $indexType)];
             $this->info = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : MentorTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->username = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : MentorTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->password = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -509,7 +589,7 @@ abstract class Mentor implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = MentorTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = MentorTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Mentor'), 0, $e);
@@ -785,6 +865,12 @@ abstract class Mentor implements ActiveRecordInterface
         if ($this->isColumnModified(MentorTableMap::COL_INFO)) {
             $modifiedColumns[':p' . $index++]  = 'info';
         }
+        if ($this->isColumnModified(MentorTableMap::COL_USERNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'username';
+        }
+        if ($this->isColumnModified(MentorTableMap::COL_PASSWORD)) {
+            $modifiedColumns[':p' . $index++]  = 'password';
+        }
 
         $sql = sprintf(
             'INSERT INTO mentor (%s) VALUES (%s)',
@@ -804,6 +890,12 @@ abstract class Mentor implements ActiveRecordInterface
                         break;
                     case 'info':
                         $stmt->bindValue($identifier, $this->info, PDO::PARAM_INT);
+                        break;
+                    case 'username':
+                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
+                        break;
+                    case 'password':
+                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -876,6 +968,12 @@ abstract class Mentor implements ActiveRecordInterface
             case 2:
                 return $this->getInfo();
                 break;
+            case 3:
+                return $this->getUsername();
+                break;
+            case 4:
+                return $this->getPassword();
+                break;
             default:
                 return null;
                 break;
@@ -909,6 +1007,8 @@ abstract class Mentor implements ActiveRecordInterface
             $keys[0] => $this->getMentorId(),
             $keys[1] => $this->getCategorie(),
             $keys[2] => $this->getInfo(),
+            $keys[3] => $this->getUsername(),
+            $keys[4] => $this->getPassword(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1019,6 +1119,12 @@ abstract class Mentor implements ActiveRecordInterface
             case 2:
                 $this->setInfo($value);
                 break;
+            case 3:
+                $this->setUsername($value);
+                break;
+            case 4:
+                $this->setPassword($value);
+                break;
         } // switch()
 
         return $this;
@@ -1053,6 +1159,12 @@ abstract class Mentor implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setInfo($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setUsername($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setPassword($arr[$keys[4]]);
         }
     }
 
@@ -1103,6 +1215,12 @@ abstract class Mentor implements ActiveRecordInterface
         }
         if ($this->isColumnModified(MentorTableMap::COL_INFO)) {
             $criteria->add(MentorTableMap::COL_INFO, $this->info);
+        }
+        if ($this->isColumnModified(MentorTableMap::COL_USERNAME)) {
+            $criteria->add(MentorTableMap::COL_USERNAME, $this->username);
+        }
+        if ($this->isColumnModified(MentorTableMap::COL_PASSWORD)) {
+            $criteria->add(MentorTableMap::COL_PASSWORD, $this->password);
         }
 
         return $criteria;
@@ -1192,6 +1310,8 @@ abstract class Mentor implements ActiveRecordInterface
     {
         $copyObj->setCategorie($this->getCategorie());
         $copyObj->setInfo($this->getInfo());
+        $copyObj->setUsername($this->getUsername());
+        $copyObj->setPassword($this->getPassword());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1907,6 +2027,8 @@ abstract class Mentor implements ActiveRecordInterface
         $this->mentor_id = null;
         $this->categorie = null;
         $this->info = null;
+        $this->username = null;
+        $this->password = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

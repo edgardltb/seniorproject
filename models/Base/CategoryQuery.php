@@ -469,7 +469,7 @@ abstract class CategoryQuery extends ModelCriteria
      *
      * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
-    public function joinMentor($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinMentor($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Mentor');
@@ -504,7 +504,7 @@ abstract class CategoryQuery extends ModelCriteria
      *
      * @return \MentorQuery A secondary query class using the current class as primary query
      */
-    public function useMentorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useMentorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinMentor($relationAlias, $joinType)

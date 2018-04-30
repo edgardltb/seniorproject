@@ -134,20 +134,6 @@ abstract class UserInfo implements ActiveRecordInterface
     protected $email;
 
     /**
-     * The value for the username field.
-     *
-     * @var        string
-     */
-    protected $username;
-
-    /**
-     * The value for the password field.
-     *
-     * @var        string
-     */
-    protected $password;
-
-    /**
      * @var        ObjectCollection|ChildAdministrator[] Collection to store aggregation of ChildAdministrator objects.
      */
     protected $collAdministrators;
@@ -507,26 +493,6 @@ abstract class UserInfo implements ActiveRecordInterface
     }
 
     /**
-     * Get the [username] column value.
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Get the [password] column value.
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
      * Set the value of [first_name] column.
      *
      * @param string $v new value
@@ -707,46 +673,6 @@ abstract class UserInfo implements ActiveRecordInterface
     } // setEmail()
 
     /**
-     * Set the value of [username] column.
-     *
-     * @param string $v new value
-     * @return $this|\UserInfo The current object (for fluent API support)
-     */
-    public function setUsername($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->username !== $v) {
-            $this->username = $v;
-            $this->modifiedColumns[UserInfoTableMap::COL_USERNAME] = true;
-        }
-
-        return $this;
-    } // setUsername()
-
-    /**
-     * Set the value of [password] column.
-     *
-     * @param string $v new value
-     * @return $this|\UserInfo The current object (for fluent API support)
-     */
-    public function setPassword($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->password !== $v) {
-            $this->password = $v;
-            $this->modifiedColumns[UserInfoTableMap::COL_PASSWORD] = true;
-        }
-
-        return $this;
-    } // setPassword()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -808,12 +734,6 @@ abstract class UserInfo implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserInfoTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserInfoTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->username = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserInfoTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->password = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -822,7 +742,7 @@ abstract class UserInfo implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = UserInfoTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = UserInfoTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\UserInfo'), 0, $e);
@@ -1107,12 +1027,6 @@ abstract class UserInfo implements ActiveRecordInterface
         if ($this->isColumnModified(UserInfoTableMap::COL_EMAIL)) {
             $modifiedColumns[':p' . $index++]  = 'email';
         }
-        if ($this->isColumnModified(UserInfoTableMap::COL_USERNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'username';
-        }
-        if ($this->isColumnModified(UserInfoTableMap::COL_PASSWORD)) {
-            $modifiedColumns[':p' . $index++]  = 'password';
-        }
 
         $sql = sprintf(
             'INSERT INTO user_info (%s) VALUES (%s)',
@@ -1150,12 +1064,6 @@ abstract class UserInfo implements ActiveRecordInterface
                         break;
                     case 'email':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
-                        break;
-                    case 'username':
-                        $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
-                        break;
-                    case 'password':
-                        $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1246,12 +1154,6 @@ abstract class UserInfo implements ActiveRecordInterface
             case 8:
                 return $this->getEmail();
                 break;
-            case 9:
-                return $this->getUsername();
-                break;
-            case 10:
-                return $this->getPassword();
-                break;
             default:
                 return null;
                 break;
@@ -1291,8 +1193,6 @@ abstract class UserInfo implements ActiveRecordInterface
             $keys[6] => $this->getZipcode(),
             $keys[7] => $this->getUserId(),
             $keys[8] => $this->getEmail(),
-            $keys[9] => $this->getUsername(),
-            $keys[10] => $this->getPassword(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1406,12 +1306,6 @@ abstract class UserInfo implements ActiveRecordInterface
             case 8:
                 $this->setEmail($value);
                 break;
-            case 9:
-                $this->setUsername($value);
-                break;
-            case 10:
-                $this->setPassword($value);
-                break;
         } // switch()
 
         return $this;
@@ -1464,12 +1358,6 @@ abstract class UserInfo implements ActiveRecordInterface
         }
         if (array_key_exists($keys[8], $arr)) {
             $this->setEmail($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setUsername($arr[$keys[9]]);
-        }
-        if (array_key_exists($keys[10], $arr)) {
-            $this->setPassword($arr[$keys[10]]);
         }
     }
 
@@ -1538,12 +1426,6 @@ abstract class UserInfo implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserInfoTableMap::COL_EMAIL)) {
             $criteria->add(UserInfoTableMap::COL_EMAIL, $this->email);
-        }
-        if ($this->isColumnModified(UserInfoTableMap::COL_USERNAME)) {
-            $criteria->add(UserInfoTableMap::COL_USERNAME, $this->username);
-        }
-        if ($this->isColumnModified(UserInfoTableMap::COL_PASSWORD)) {
-            $criteria->add(UserInfoTableMap::COL_PASSWORD, $this->password);
         }
 
         return $criteria;
@@ -1639,8 +1521,6 @@ abstract class UserInfo implements ActiveRecordInterface
         $copyObj->setCity($this->getCity());
         $copyObj->setZipcode($this->getZipcode());
         $copyObj->setEmail($this->getEmail());
-        $copyObj->setUsername($this->getUsername());
-        $copyObj->setPassword($this->getPassword());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2486,8 +2366,6 @@ abstract class UserInfo implements ActiveRecordInterface
         $this->zipcode = null;
         $this->user_id = null;
         $this->email = null;
-        $this->username = null;
-        $this->password = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

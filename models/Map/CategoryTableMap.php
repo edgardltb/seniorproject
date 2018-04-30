@@ -152,14 +152,14 @@ class CategoryTableMap extends TableMap
     0 => ':cat',
     1 => ':categorie_id',
   ),
-), null, null, 'Customers', false);
+), 'SET NULL', null, 'Customers', false);
         $this->addRelation('Mentor', '\\Mentor', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':categorie',
     1 => ':categorie_id',
   ),
-), null, null, 'Mentors', false);
+), 'SET NULL', null, 'Mentors', false);
         $this->addRelation('Questions', '\\Questions', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -175,6 +175,8 @@ class CategoryTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        CustomerTableMap::clearInstancePool();
+        MentorTableMap::clearInstancePool();
         QuestionsTableMap::clearInstancePool();
     }
 

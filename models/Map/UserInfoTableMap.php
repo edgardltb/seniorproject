@@ -59,7 +59,7 @@ class UserInfoTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 11;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class UserInfoTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 11;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the first_name field
@@ -117,16 +117,6 @@ class UserInfoTableMap extends TableMap
     const COL_EMAIL = 'user_info.email';
 
     /**
-     * the column name for the username field
-     */
-    const COL_USERNAME = 'user_info.username';
-
-    /**
-     * the column name for the password field
-     */
-    const COL_PASSWORD = 'user_info.password';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -138,11 +128,11 @@ class UserInfoTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('FirstName', 'LastName', 'Phonenum', 'Address', 'State', 'City', 'Zipcode', 'UserId', 'Email', 'Username', 'Password', ),
-        self::TYPE_CAMELNAME     => array('firstName', 'lastName', 'phonenum', 'address', 'state', 'city', 'zipcode', 'userId', 'email', 'username', 'password', ),
-        self::TYPE_COLNAME       => array(UserInfoTableMap::COL_FIRST_NAME, UserInfoTableMap::COL_LAST_NAME, UserInfoTableMap::COL_PHONENUM, UserInfoTableMap::COL_ADDRESS, UserInfoTableMap::COL_STATE, UserInfoTableMap::COL_CITY, UserInfoTableMap::COL_ZIPCODE, UserInfoTableMap::COL_USER_ID, UserInfoTableMap::COL_EMAIL, UserInfoTableMap::COL_USERNAME, UserInfoTableMap::COL_PASSWORD, ),
-        self::TYPE_FIELDNAME     => array('first_name', 'last_name', 'phonenum', 'address', 'state', 'city', 'zipcode', 'user_id', 'email', 'username', 'password', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('FirstName', 'LastName', 'Phonenum', 'Address', 'State', 'City', 'Zipcode', 'UserId', 'Email', ),
+        self::TYPE_CAMELNAME     => array('firstName', 'lastName', 'phonenum', 'address', 'state', 'city', 'zipcode', 'userId', 'email', ),
+        self::TYPE_COLNAME       => array(UserInfoTableMap::COL_FIRST_NAME, UserInfoTableMap::COL_LAST_NAME, UserInfoTableMap::COL_PHONENUM, UserInfoTableMap::COL_ADDRESS, UserInfoTableMap::COL_STATE, UserInfoTableMap::COL_CITY, UserInfoTableMap::COL_ZIPCODE, UserInfoTableMap::COL_USER_ID, UserInfoTableMap::COL_EMAIL, ),
+        self::TYPE_FIELDNAME     => array('first_name', 'last_name', 'phonenum', 'address', 'state', 'city', 'zipcode', 'user_id', 'email', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -152,11 +142,11 @@ class UserInfoTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('FirstName' => 0, 'LastName' => 1, 'Phonenum' => 2, 'Address' => 3, 'State' => 4, 'City' => 5, 'Zipcode' => 6, 'UserId' => 7, 'Email' => 8, 'Username' => 9, 'Password' => 10, ),
-        self::TYPE_CAMELNAME     => array('firstName' => 0, 'lastName' => 1, 'phonenum' => 2, 'address' => 3, 'state' => 4, 'city' => 5, 'zipcode' => 6, 'userId' => 7, 'email' => 8, 'username' => 9, 'password' => 10, ),
-        self::TYPE_COLNAME       => array(UserInfoTableMap::COL_FIRST_NAME => 0, UserInfoTableMap::COL_LAST_NAME => 1, UserInfoTableMap::COL_PHONENUM => 2, UserInfoTableMap::COL_ADDRESS => 3, UserInfoTableMap::COL_STATE => 4, UserInfoTableMap::COL_CITY => 5, UserInfoTableMap::COL_ZIPCODE => 6, UserInfoTableMap::COL_USER_ID => 7, UserInfoTableMap::COL_EMAIL => 8, UserInfoTableMap::COL_USERNAME => 9, UserInfoTableMap::COL_PASSWORD => 10, ),
-        self::TYPE_FIELDNAME     => array('first_name' => 0, 'last_name' => 1, 'phonenum' => 2, 'address' => 3, 'state' => 4, 'city' => 5, 'zipcode' => 6, 'user_id' => 7, 'email' => 8, 'username' => 9, 'password' => 10, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('FirstName' => 0, 'LastName' => 1, 'Phonenum' => 2, 'Address' => 3, 'State' => 4, 'City' => 5, 'Zipcode' => 6, 'UserId' => 7, 'Email' => 8, ),
+        self::TYPE_CAMELNAME     => array('firstName' => 0, 'lastName' => 1, 'phonenum' => 2, 'address' => 3, 'state' => 4, 'city' => 5, 'zipcode' => 6, 'userId' => 7, 'email' => 8, ),
+        self::TYPE_COLNAME       => array(UserInfoTableMap::COL_FIRST_NAME => 0, UserInfoTableMap::COL_LAST_NAME => 1, UserInfoTableMap::COL_PHONENUM => 2, UserInfoTableMap::COL_ADDRESS => 3, UserInfoTableMap::COL_STATE => 4, UserInfoTableMap::COL_CITY => 5, UserInfoTableMap::COL_ZIPCODE => 6, UserInfoTableMap::COL_USER_ID => 7, UserInfoTableMap::COL_EMAIL => 8, ),
+        self::TYPE_FIELDNAME     => array('first_name' => 0, 'last_name' => 1, 'phonenum' => 2, 'address' => 3, 'state' => 4, 'city' => 5, 'zipcode' => 6, 'user_id' => 7, 'email' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -185,8 +175,6 @@ class UserInfoTableMap extends TableMap
         $this->addColumn('zipcode', 'Zipcode', 'VARCHAR', false, 45, null);
         $this->addPrimaryKey('user_id', 'UserId', 'INTEGER', true, null, null);
         $this->addColumn('email', 'Email', 'VARCHAR', false, 45, null);
-        $this->addColumn('username', 'Username', 'VARCHAR', false, 45, null);
-        $this->addColumn('password', 'Password', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -197,17 +185,17 @@ class UserInfoTableMap extends TableMap
         $this->addRelation('Administrator', '\\Administrator', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_info_id',
+    0 => ':info_id',
     1 => ':user_id',
   ),
 ), 'CASCADE', null, 'Administrators', false);
         $this->addRelation('Customer', '\\Customer', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_info_id',
+    0 => ':info_id',
     1 => ':user_id',
   ),
-), null, null, 'Customers', false);
+), 'CASCADE', null, 'Customers', false);
         $this->addRelation('Mentor', '\\Mentor', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -224,6 +212,7 @@ class UserInfoTableMap extends TableMap
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         AdministratorTableMap::clearInstancePool();
+        CustomerTableMap::clearInstancePool();
         MentorTableMap::clearInstancePool();
     }
 
@@ -377,8 +366,6 @@ class UserInfoTableMap extends TableMap
             $criteria->addSelectColumn(UserInfoTableMap::COL_ZIPCODE);
             $criteria->addSelectColumn(UserInfoTableMap::COL_USER_ID);
             $criteria->addSelectColumn(UserInfoTableMap::COL_EMAIL);
-            $criteria->addSelectColumn(UserInfoTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(UserInfoTableMap::COL_PASSWORD);
         } else {
             $criteria->addSelectColumn($alias . '.first_name');
             $criteria->addSelectColumn($alias . '.last_name');
@@ -389,8 +376,6 @@ class UserInfoTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.zipcode');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.email');
-            $criteria->addSelectColumn($alias . '.username');
-            $criteria->addSelectColumn($alias . '.password');
         }
     }
 

@@ -23,12 +23,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMediaQuery orderByMediaId($order = Criteria::ASC) Order by the Media_id column
  * @method     ChildMediaQuery orderByVideo($order = Criteria::ASC) Order by the video column
  * @method     ChildMediaQuery orderByLink($order = Criteria::ASC) Order by the link column
- * @method     ChildMediaQuery orderByQuestionId($order = Criteria::ASC) Order by the question_id column
  *
  * @method     ChildMediaQuery groupByMediaId() Group by the Media_id column
  * @method     ChildMediaQuery groupByVideo() Group by the video column
  * @method     ChildMediaQuery groupByLink() Group by the link column
- * @method     ChildMediaQuery groupByQuestionId() Group by the question_id column
  *
  * @method     ChildMediaQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildMediaQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -38,25 +36,24 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMediaQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildMediaQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildMediaQuery leftJoinQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the Questions relation
- * @method     ChildMediaQuery rightJoinQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Questions relation
- * @method     ChildMediaQuery innerJoinQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the Questions relation
+ * @method     ChildMediaQuery leftJoinAnsweredQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildMediaQuery rightJoinAnsweredQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildMediaQuery innerJoinAnsweredQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the AnsweredQuestions relation
  *
- * @method     ChildMediaQuery joinWithQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Questions relation
+ * @method     ChildMediaQuery joinWithAnsweredQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the AnsweredQuestions relation
  *
- * @method     ChildMediaQuery leftJoinWithQuestions() Adds a LEFT JOIN clause and with to the query using the Questions relation
- * @method     ChildMediaQuery rightJoinWithQuestions() Adds a RIGHT JOIN clause and with to the query using the Questions relation
- * @method     ChildMediaQuery innerJoinWithQuestions() Adds a INNER JOIN clause and with to the query using the Questions relation
+ * @method     ChildMediaQuery leftJoinWithAnsweredQuestions() Adds a LEFT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildMediaQuery rightJoinWithAnsweredQuestions() Adds a RIGHT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildMediaQuery innerJoinWithAnsweredQuestions() Adds a INNER JOIN clause and with to the query using the AnsweredQuestions relation
  *
- * @method     \QuestionsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \AnsweredQuestionsQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildMedia findOne(ConnectionInterface $con = null) Return the first ChildMedia matching the query
  * @method     ChildMedia findOneOrCreate(ConnectionInterface $con = null) Return the first ChildMedia matching the query, or a new ChildMedia object populated from the query conditions when no match is found
  *
  * @method     ChildMedia findOneByMediaId(int $Media_id) Return the first ChildMedia filtered by the Media_id column
  * @method     ChildMedia findOneByVideo(boolean $video) Return the first ChildMedia filtered by the video column
- * @method     ChildMedia findOneByLink(string $link) Return the first ChildMedia filtered by the link column
- * @method     ChildMedia findOneByQuestionId(int $question_id) Return the first ChildMedia filtered by the question_id column *
+ * @method     ChildMedia findOneByLink(string $link) Return the first ChildMedia filtered by the link column *
 
  * @method     ChildMedia requirePk($key, ConnectionInterface $con = null) Return the ChildMedia by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMedia requireOne(ConnectionInterface $con = null) Return the first ChildMedia matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -64,13 +61,11 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMedia requireOneByMediaId(int $Media_id) Return the first ChildMedia filtered by the Media_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMedia requireOneByVideo(boolean $video) Return the first ChildMedia filtered by the video column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildMedia requireOneByLink(string $link) Return the first ChildMedia filtered by the link column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildMedia requireOneByQuestionId(int $question_id) Return the first ChildMedia filtered by the question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildMedia[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildMedia objects based on current ModelCriteria
  * @method     ChildMedia[]|ObjectCollection findByMediaId(int $Media_id) Return ChildMedia objects filtered by the Media_id column
  * @method     ChildMedia[]|ObjectCollection findByVideo(boolean $video) Return ChildMedia objects filtered by the video column
  * @method     ChildMedia[]|ObjectCollection findByLink(string $link) Return ChildMedia objects filtered by the link column
- * @method     ChildMedia[]|ObjectCollection findByQuestionId(int $question_id) Return ChildMedia objects filtered by the question_id column
  * @method     ChildMedia[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -169,7 +164,7 @@ abstract class MediaQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT Media_id, video, link, question_id FROM media WHERE Media_id = :p0';
+        $sql = 'SELECT Media_id, video, link FROM media WHERE Media_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -353,87 +348,40 @@ abstract class MediaQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the question_id column
+     * Filter the query by a related \AnsweredQuestions object
      *
-     * Example usage:
-     * <code>
-     * $query->filterByQuestionId(1234); // WHERE question_id = 1234
-     * $query->filterByQuestionId(array(12, 34)); // WHERE question_id IN (12, 34)
-     * $query->filterByQuestionId(array('min' => 12)); // WHERE question_id > 12
-     * </code>
-     *
-     * @see       filterByQuestions()
-     *
-     * @param     mixed $questionId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildMediaQuery The current query, for fluid interface
-     */
-    public function filterByQuestionId($questionId = null, $comparison = null)
-    {
-        if (is_array($questionId)) {
-            $useMinMax = false;
-            if (isset($questionId['min'])) {
-                $this->addUsingAlias(MediaTableMap::COL_QUESTION_ID, $questionId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($questionId['max'])) {
-                $this->addUsingAlias(MediaTableMap::COL_QUESTION_ID, $questionId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(MediaTableMap::COL_QUESTION_ID, $questionId, $comparison);
-    }
-
-    /**
-     * Filter the query by a related \Questions object
-     *
-     * @param \Questions|ObjectCollection $questions The related object(s) to use as filter
+     * @param \AnsweredQuestions|ObjectCollection $answeredQuestions the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return ChildMediaQuery The current query, for fluid interface
      */
-    public function filterByQuestions($questions, $comparison = null)
+    public function filterByAnsweredQuestions($answeredQuestions, $comparison = null)
     {
-        if ($questions instanceof \Questions) {
+        if ($answeredQuestions instanceof \AnsweredQuestions) {
             return $this
-                ->addUsingAlias(MediaTableMap::COL_QUESTION_ID, $questions->getQuestionId(), $comparison);
-        } elseif ($questions instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
+                ->addUsingAlias(MediaTableMap::COL_MEDIA_ID, $answeredQuestions->getMediaId(), $comparison);
+        } elseif ($answeredQuestions instanceof ObjectCollection) {
             return $this
-                ->addUsingAlias(MediaTableMap::COL_QUESTION_ID, $questions->toKeyValue('PrimaryKey', 'QuestionId'), $comparison);
+                ->useAnsweredQuestionsQuery()
+                ->filterByPrimaryKeys($answeredQuestions->getPrimaryKeys())
+                ->endUse();
         } else {
-            throw new PropelException('filterByQuestions() only accepts arguments of type \Questions or Collection');
+            throw new PropelException('filterByAnsweredQuestions() only accepts arguments of type \AnsweredQuestions or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Questions relation
+     * Adds a JOIN clause to the query using the AnsweredQuestions relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildMediaQuery The current query, for fluid interface
      */
-    public function joinQuestions($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinAnsweredQuestions($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Questions');
+        $relationMap = $tableMap->getRelation('AnsweredQuestions');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -448,14 +396,14 @@ abstract class MediaQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Questions');
+            $this->addJoinObject($join, 'AnsweredQuestions');
         }
 
         return $this;
     }
 
     /**
-     * Use the Questions relation Questions object
+     * Use the AnsweredQuestions relation AnsweredQuestions object
      *
      * @see useQuery()
      *
@@ -463,13 +411,13 @@ abstract class MediaQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \QuestionsQuery A secondary query class using the current class as primary query
+     * @return \AnsweredQuestionsQuery A secondary query class using the current class as primary query
      */
-    public function useQuestionsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useAnsweredQuestionsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinQuestions($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Questions', '\QuestionsQuery');
+            ->joinAnsweredQuestions($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AnsweredQuestions', '\AnsweredQuestionsQuery');
     }
 
     /**

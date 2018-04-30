@@ -23,12 +23,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomerQuery orderByCustomerId($order = Criteria::ASC) Order by the customer_id column
  * @method     ChildCustomerQuery orderByMen($order = Criteria::ASC) Order by the men column
  * @method     ChildCustomerQuery orderByCat($order = Criteria::ASC) Order by the cat column
- * @method     ChildCustomerQuery orderByUserInfoId($order = Criteria::ASC) Order by the user_info_id column
+ * @method     ChildCustomerQuery orderByInfoId($order = Criteria::ASC) Order by the info_id column
+ * @method     ChildCustomerQuery orderByUsername($order = Criteria::ASC) Order by the username column
+ * @method     ChildCustomerQuery orderByPassword($order = Criteria::ASC) Order by the password column
  *
  * @method     ChildCustomerQuery groupByCustomerId() Group by the customer_id column
  * @method     ChildCustomerQuery groupByMen() Group by the men column
  * @method     ChildCustomerQuery groupByCat() Group by the cat column
- * @method     ChildCustomerQuery groupByUserInfoId() Group by the user_info_id column
+ * @method     ChildCustomerQuery groupByInfoId() Group by the info_id column
+ * @method     ChildCustomerQuery groupByUsername() Group by the username column
+ * @method     ChildCustomerQuery groupByPassword() Group by the password column
  *
  * @method     ChildCustomerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildCustomerQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -68,15 +72,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomerQuery rightJoinWithUserInfo() Adds a RIGHT JOIN clause and with to the query using the UserInfo relation
  * @method     ChildCustomerQuery innerJoinWithUserInfo() Adds a INNER JOIN clause and with to the query using the UserInfo relation
  *
- * @method     ChildCustomerQuery leftJoinCustomerHasQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the CustomerHasQuestions relation
- * @method     ChildCustomerQuery rightJoinCustomerHasQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CustomerHasQuestions relation
- * @method     ChildCustomerQuery innerJoinCustomerHasQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the CustomerHasQuestions relation
+ * @method     ChildCustomerQuery leftJoinAnsweredQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildCustomerQuery rightJoinAnsweredQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the AnsweredQuestions relation
+ * @method     ChildCustomerQuery innerJoinAnsweredQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the AnsweredQuestions relation
  *
- * @method     ChildCustomerQuery joinWithCustomerHasQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the CustomerHasQuestions relation
+ * @method     ChildCustomerQuery joinWithAnsweredQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the AnsweredQuestions relation
  *
- * @method     ChildCustomerQuery leftJoinWithCustomerHasQuestions() Adds a LEFT JOIN clause and with to the query using the CustomerHasQuestions relation
- * @method     ChildCustomerQuery rightJoinWithCustomerHasQuestions() Adds a RIGHT JOIN clause and with to the query using the CustomerHasQuestions relation
- * @method     ChildCustomerQuery innerJoinWithCustomerHasQuestions() Adds a INNER JOIN clause and with to the query using the CustomerHasQuestions relation
+ * @method     ChildCustomerQuery leftJoinWithAnsweredQuestions() Adds a LEFT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildCustomerQuery rightJoinWithAnsweredQuestions() Adds a RIGHT JOIN clause and with to the query using the AnsweredQuestions relation
+ * @method     ChildCustomerQuery innerJoinWithAnsweredQuestions() Adds a INNER JOIN clause and with to the query using the AnsweredQuestions relation
  *
  * @method     ChildCustomerQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
  * @method     ChildCustomerQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
@@ -88,7 +92,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomerQuery rightJoinWithSchedule() Adds a RIGHT JOIN clause and with to the query using the Schedule relation
  * @method     ChildCustomerQuery innerJoinWithSchedule() Adds a INNER JOIN clause and with to the query using the Schedule relation
  *
- * @method     \CategoryQuery|\MentorQuery|\UserInfoQuery|\CustomerHasQuestionsQuery|\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \CategoryQuery|\MentorQuery|\UserInfoQuery|\AnsweredQuestionsQuery|\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildCustomer findOne(ConnectionInterface $con = null) Return the first ChildCustomer matching the query
  * @method     ChildCustomer findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCustomer matching the query, or a new ChildCustomer object populated from the query conditions when no match is found
@@ -96,7 +100,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomer findOneByCustomerId(int $customer_id) Return the first ChildCustomer filtered by the customer_id column
  * @method     ChildCustomer findOneByMen(int $men) Return the first ChildCustomer filtered by the men column
  * @method     ChildCustomer findOneByCat(int $cat) Return the first ChildCustomer filtered by the cat column
- * @method     ChildCustomer findOneByUserInfoId(int $user_info_id) Return the first ChildCustomer filtered by the user_info_id column *
+ * @method     ChildCustomer findOneByInfoId(int $info_id) Return the first ChildCustomer filtered by the info_id column
+ * @method     ChildCustomer findOneByUsername(string $username) Return the first ChildCustomer filtered by the username column
+ * @method     ChildCustomer findOneByPassword(string $password) Return the first ChildCustomer filtered by the password column *
 
  * @method     ChildCustomer requirePk($key, ConnectionInterface $con = null) Return the ChildCustomer by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCustomer requireOne(ConnectionInterface $con = null) Return the first ChildCustomer matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -104,13 +110,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCustomer requireOneByCustomerId(int $customer_id) Return the first ChildCustomer filtered by the customer_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCustomer requireOneByMen(int $men) Return the first ChildCustomer filtered by the men column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildCustomer requireOneByCat(int $cat) Return the first ChildCustomer filtered by the cat column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildCustomer requireOneByUserInfoId(int $user_info_id) Return the first ChildCustomer filtered by the user_info_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCustomer requireOneByInfoId(int $info_id) Return the first ChildCustomer filtered by the info_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCustomer requireOneByUsername(string $username) Return the first ChildCustomer filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCustomer requireOneByPassword(string $password) Return the first ChildCustomer filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildCustomer[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCustomer objects based on current ModelCriteria
  * @method     ChildCustomer[]|ObjectCollection findByCustomerId(int $customer_id) Return ChildCustomer objects filtered by the customer_id column
  * @method     ChildCustomer[]|ObjectCollection findByMen(int $men) Return ChildCustomer objects filtered by the men column
  * @method     ChildCustomer[]|ObjectCollection findByCat(int $cat) Return ChildCustomer objects filtered by the cat column
- * @method     ChildCustomer[]|ObjectCollection findByUserInfoId(int $user_info_id) Return ChildCustomer objects filtered by the user_info_id column
+ * @method     ChildCustomer[]|ObjectCollection findByInfoId(int $info_id) Return ChildCustomer objects filtered by the info_id column
+ * @method     ChildCustomer[]|ObjectCollection findByUsername(string $username) Return ChildCustomer objects filtered by the username column
+ * @method     ChildCustomer[]|ObjectCollection findByPassword(string $password) Return ChildCustomer objects filtered by the password column
  * @method     ChildCustomer[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -209,7 +219,7 @@ abstract class CustomerQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT customer_id, men, cat, user_info_id FROM customer WHERE customer_id = :p0';
+        $sql = 'SELECT customer_id, men, cat, info_id, username, password FROM customer WHERE customer_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -427,18 +437,18 @@ abstract class CustomerQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_info_id column
+     * Filter the query on the info_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUserInfoId(1234); // WHERE user_info_id = 1234
-     * $query->filterByUserInfoId(array(12, 34)); // WHERE user_info_id IN (12, 34)
-     * $query->filterByUserInfoId(array('min' => 12)); // WHERE user_info_id > 12
+     * $query->filterByInfoId(1234); // WHERE info_id = 1234
+     * $query->filterByInfoId(array(12, 34)); // WHERE info_id IN (12, 34)
+     * $query->filterByInfoId(array('min' => 12)); // WHERE info_id > 12
      * </code>
      *
      * @see       filterByUserInfo()
      *
-     * @param     mixed $userInfoId The value to use as filter.
+     * @param     mixed $infoId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -446,16 +456,16 @@ abstract class CustomerQuery extends ModelCriteria
      *
      * @return $this|ChildCustomerQuery The current query, for fluid interface
      */
-    public function filterByUserInfoId($userInfoId = null, $comparison = null)
+    public function filterByInfoId($infoId = null, $comparison = null)
     {
-        if (is_array($userInfoId)) {
+        if (is_array($infoId)) {
             $useMinMax = false;
-            if (isset($userInfoId['min'])) {
-                $this->addUsingAlias(CustomerTableMap::COL_USER_INFO_ID, $userInfoId['min'], Criteria::GREATER_EQUAL);
+            if (isset($infoId['min'])) {
+                $this->addUsingAlias(CustomerTableMap::COL_INFO_ID, $infoId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($userInfoId['max'])) {
-                $this->addUsingAlias(CustomerTableMap::COL_USER_INFO_ID, $userInfoId['max'], Criteria::LESS_EQUAL);
+            if (isset($infoId['max'])) {
+                $this->addUsingAlias(CustomerTableMap::COL_INFO_ID, $infoId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -466,7 +476,57 @@ abstract class CustomerQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(CustomerTableMap::COL_USER_INFO_ID, $userInfoId, $comparison);
+        return $this->addUsingAlias(CustomerTableMap::COL_INFO_ID, $infoId, $comparison);
+    }
+
+    /**
+     * Filter the query on the username column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUsername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByUsername('%fooValue%', Criteria::LIKE); // WHERE username LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $username The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCustomerQuery The current query, for fluid interface
+     */
+    public function filterByUsername($username = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($username)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CustomerTableMap::COL_USERNAME, $username, $comparison);
+    }
+
+    /**
+     * Filter the query on the password column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPassword('fooValue');   // WHERE password = 'fooValue'
+     * $query->filterByPassword('%fooValue%', Criteria::LIKE); // WHERE password LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $password The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCustomerQuery The current query, for fluid interface
+     */
+    public function filterByPassword($password = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($password)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CustomerTableMap::COL_PASSWORD, $password, $comparison);
     }
 
     /**
@@ -637,14 +697,14 @@ abstract class CustomerQuery extends ModelCriteria
     {
         if ($userInfo instanceof \UserInfo) {
             return $this
-                ->addUsingAlias(CustomerTableMap::COL_USER_INFO_ID, $userInfo->getUserId(), $comparison);
+                ->addUsingAlias(CustomerTableMap::COL_INFO_ID, $userInfo->getUserId(), $comparison);
         } elseif ($userInfo instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(CustomerTableMap::COL_USER_INFO_ID, $userInfo->toKeyValue('PrimaryKey', 'UserId'), $comparison);
+                ->addUsingAlias(CustomerTableMap::COL_INFO_ID, $userInfo->toKeyValue('PrimaryKey', 'UserId'), $comparison);
         } else {
             throw new PropelException('filterByUserInfo() only accepts arguments of type \UserInfo or Collection');
         }
@@ -701,40 +761,40 @@ abstract class CustomerQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \CustomerHasQuestions object
+     * Filter the query by a related \AnsweredQuestions object
      *
-     * @param \CustomerHasQuestions|ObjectCollection $customerHasQuestions the related object to use as filter
+     * @param \AnsweredQuestions|ObjectCollection $answeredQuestions the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildCustomerQuery The current query, for fluid interface
      */
-    public function filterByCustomerHasQuestions($customerHasQuestions, $comparison = null)
+    public function filterByAnsweredQuestions($answeredQuestions, $comparison = null)
     {
-        if ($customerHasQuestions instanceof \CustomerHasQuestions) {
+        if ($answeredQuestions instanceof \AnsweredQuestions) {
             return $this
-                ->addUsingAlias(CustomerTableMap::COL_CUSTOMER_ID, $customerHasQuestions->getCustomerId(), $comparison);
-        } elseif ($customerHasQuestions instanceof ObjectCollection) {
+                ->addUsingAlias(CustomerTableMap::COL_CUSTOMER_ID, $answeredQuestions->getCustomerId(), $comparison);
+        } elseif ($answeredQuestions instanceof ObjectCollection) {
             return $this
-                ->useCustomerHasQuestionsQuery()
-                ->filterByPrimaryKeys($customerHasQuestions->getPrimaryKeys())
+                ->useAnsweredQuestionsQuery()
+                ->filterByPrimaryKeys($answeredQuestions->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByCustomerHasQuestions() only accepts arguments of type \CustomerHasQuestions or Collection');
+            throw new PropelException('filterByAnsweredQuestions() only accepts arguments of type \AnsweredQuestions or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the CustomerHasQuestions relation
+     * Adds a JOIN clause to the query using the AnsweredQuestions relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildCustomerQuery The current query, for fluid interface
      */
-    public function joinCustomerHasQuestions($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinAnsweredQuestions($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CustomerHasQuestions');
+        $relationMap = $tableMap->getRelation('AnsweredQuestions');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -749,14 +809,14 @@ abstract class CustomerQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'CustomerHasQuestions');
+            $this->addJoinObject($join, 'AnsweredQuestions');
         }
 
         return $this;
     }
 
     /**
-     * Use the CustomerHasQuestions relation CustomerHasQuestions object
+     * Use the AnsweredQuestions relation AnsweredQuestions object
      *
      * @see useQuery()
      *
@@ -764,13 +824,13 @@ abstract class CustomerQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \CustomerHasQuestionsQuery A secondary query class using the current class as primary query
+     * @return \AnsweredQuestionsQuery A secondary query class using the current class as primary query
      */
-    public function useCustomerHasQuestionsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useAnsweredQuestionsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinCustomerHasQuestions($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CustomerHasQuestions', '\CustomerHasQuestionsQuery');
+            ->joinAnsweredQuestions($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'AnsweredQuestions', '\AnsweredQuestionsQuery');
     }
 
     /**
@@ -844,23 +904,6 @@ abstract class CustomerQuery extends ModelCriteria
         return $this
             ->joinSchedule($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Schedule', '\ScheduleQuery');
-    }
-
-    /**
-     * Filter the query by a related Questions object
-     * using the customer_has_questions table as cross reference
-     *
-     * @param Questions $questions the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildCustomerQuery The current query, for fluid interface
-     */
-    public function filterByQuestions($questions, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useCustomerHasQuestionsQuery()
-            ->filterByQuestions($questions, $comparison)
-            ->endUse();
     }
 
     /**

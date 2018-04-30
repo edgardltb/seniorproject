@@ -59,7 +59,7 @@ class AdministratorTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class AdministratorTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the admin_id field
@@ -77,9 +77,19 @@ class AdministratorTableMap extends TableMap
     const COL_ADMIN_ID = 'administrator.admin_id';
 
     /**
-     * the column name for the user_info_id field
+     * the column name for the info_id field
      */
-    const COL_USER_INFO_ID = 'administrator.user_info_id';
+    const COL_INFO_ID = 'administrator.info_id';
+
+    /**
+     * the column name for the username field
+     */
+    const COL_USERNAME = 'administrator.username';
+
+    /**
+     * the column name for the password field
+     */
+    const COL_PASSWORD = 'administrator.password';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +103,11 @@ class AdministratorTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('AdminId', 'UserInfoId', ),
-        self::TYPE_CAMELNAME     => array('adminId', 'userInfoId', ),
-        self::TYPE_COLNAME       => array(AdministratorTableMap::COL_ADMIN_ID, AdministratorTableMap::COL_USER_INFO_ID, ),
-        self::TYPE_FIELDNAME     => array('admin_id', 'user_info_id', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('AdminId', 'InfoId', 'Username', 'Password', ),
+        self::TYPE_CAMELNAME     => array('adminId', 'infoId', 'username', 'password', ),
+        self::TYPE_COLNAME       => array(AdministratorTableMap::COL_ADMIN_ID, AdministratorTableMap::COL_INFO_ID, AdministratorTableMap::COL_USERNAME, AdministratorTableMap::COL_PASSWORD, ),
+        self::TYPE_FIELDNAME     => array('admin_id', 'info_id', 'username', 'password', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -107,11 +117,11 @@ class AdministratorTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('AdminId' => 0, 'UserInfoId' => 1, ),
-        self::TYPE_CAMELNAME     => array('adminId' => 0, 'userInfoId' => 1, ),
-        self::TYPE_COLNAME       => array(AdministratorTableMap::COL_ADMIN_ID => 0, AdministratorTableMap::COL_USER_INFO_ID => 1, ),
-        self::TYPE_FIELDNAME     => array('admin_id' => 0, 'user_info_id' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('AdminId' => 0, 'InfoId' => 1, 'Username' => 2, 'Password' => 3, ),
+        self::TYPE_CAMELNAME     => array('adminId' => 0, 'infoId' => 1, 'username' => 2, 'password' => 3, ),
+        self::TYPE_COLNAME       => array(AdministratorTableMap::COL_ADMIN_ID => 0, AdministratorTableMap::COL_INFO_ID => 1, AdministratorTableMap::COL_USERNAME => 2, AdministratorTableMap::COL_PASSWORD => 3, ),
+        self::TYPE_FIELDNAME     => array('admin_id' => 0, 'info_id' => 1, 'username' => 2, 'password' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -132,7 +142,9 @@ class AdministratorTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('admin_id', 'AdminId', 'INTEGER', true, null, null);
-        $this->addForeignKey('user_info_id', 'UserInfoId', 'INTEGER', 'user_info', 'user_id', true, null, null);
+        $this->addForeignKey('info_id', 'InfoId', 'INTEGER', 'user_info', 'user_id', true, null, null);
+        $this->addColumn('username', 'Username', 'VARCHAR', false, 45, null);
+        $this->addColumn('password', 'Password', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -143,7 +155,7 @@ class AdministratorTableMap extends TableMap
         $this->addRelation('UserInfo', '\\UserInfo', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_info_id',
+    0 => ':info_id',
     1 => ':user_id',
   ),
 ), 'CASCADE', null, null, false);
@@ -291,10 +303,14 @@ class AdministratorTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(AdministratorTableMap::COL_ADMIN_ID);
-            $criteria->addSelectColumn(AdministratorTableMap::COL_USER_INFO_ID);
+            $criteria->addSelectColumn(AdministratorTableMap::COL_INFO_ID);
+            $criteria->addSelectColumn(AdministratorTableMap::COL_USERNAME);
+            $criteria->addSelectColumn(AdministratorTableMap::COL_PASSWORD);
         } else {
             $criteria->addSelectColumn($alias . '.admin_id');
-            $criteria->addSelectColumn($alias . '.user_info_id');
+            $criteria->addSelectColumn($alias . '.info_id');
+            $criteria->addSelectColumn($alias . '.username');
+            $criteria->addSelectColumn($alias . '.password');
         }
     }
 

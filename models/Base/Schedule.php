@@ -73,18 +73,18 @@ abstract class Schedule implements ActiveRecordInterface
     protected $schedule_id;
 
     /**
-     * The value for the time field.
+     * The value for the start_time field.
      *
      * @var        DateTime
      */
-    protected $time;
+    protected $start_time;
 
     /**
-     * The value for the datemade field.
+     * The value for the end_time field.
      *
      * @var        DateTime
      */
-    protected $datemade;
+    protected $end_time;
 
     /**
      * The value for the mentor_id field.
@@ -361,7 +361,7 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Get the [optionally formatted] temporal [time] column value.
+     * Get the [optionally formatted] temporal [start_time] column value.
      *
      *
      * @param      string|null $format The date/time format string (either date()-style or strftime()-style).
@@ -371,17 +371,17 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getTime($format = NULL)
+    public function getStartTime($format = NULL)
     {
         if ($format === null) {
-            return $this->time;
+            return $this->start_time;
         } else {
-            return $this->time instanceof \DateTimeInterface ? $this->time->format($format) : null;
+            return $this->start_time instanceof \DateTimeInterface ? $this->start_time->format($format) : null;
         }
     }
 
     /**
-     * Get the [optionally formatted] temporal [datemade] column value.
+     * Get the [optionally formatted] temporal [end_time] column value.
      *
      *
      * @param      string|null $format The date/time format string (either date()-style or strftime()-style).
@@ -391,12 +391,12 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDatemade($format = NULL)
+    public function getEndTime($format = NULL)
     {
         if ($format === null) {
-            return $this->datemade;
+            return $this->end_time;
         } else {
-            return $this->datemade instanceof \DateTimeInterface ? $this->datemade->format($format) : null;
+            return $this->end_time instanceof \DateTimeInterface ? $this->end_time->format($format) : null;
         }
     }
 
@@ -451,44 +451,44 @@ abstract class Schedule implements ActiveRecordInterface
     } // setScheduleId()
 
     /**
-     * Sets the value of [time] column to a normalized version of the date/time value specified.
+     * Sets the value of [start_time] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Schedule The current object (for fluent API support)
      */
-    public function setTime($v)
+    public function setStartTime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time !== null || $dt !== null) {
-            if ($this->time === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->time->format("Y-m-d H:i:s.u")) {
-                $this->time = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ScheduleTableMap::COL_TIME] = true;
+        if ($this->start_time !== null || $dt !== null) {
+            if ($this->start_time === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->start_time->format("Y-m-d H:i:s.u")) {
+                $this->start_time = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ScheduleTableMap::COL_START_TIME] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setTime()
+    } // setStartTime()
 
     /**
-     * Sets the value of [datemade] column to a normalized version of the date/time value specified.
+     * Sets the value of [end_time] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Schedule The current object (for fluent API support)
      */
-    public function setDatemade($v)
+    public function setEndTime($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->datemade !== null || $dt !== null) {
-            if ($this->datemade === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->datemade->format("Y-m-d H:i:s.u")) {
-                $this->datemade = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ScheduleTableMap::COL_DATEMADE] = true;
+        if ($this->end_time !== null || $dt !== null) {
+            if ($this->end_time === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->end_time->format("Y-m-d H:i:s.u")) {
+                $this->end_time = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ScheduleTableMap::COL_END_TIME] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setDatemade()
+    } // setEndTime()
 
     /**
      * Set the value of [mentor_id] column.
@@ -597,17 +597,17 @@ abstract class Schedule implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ScheduleTableMap::translateFieldName('ScheduleId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->schedule_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ScheduleTableMap::translateFieldName('Time', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ScheduleTableMap::translateFieldName('StartTime', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $this->start_time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('Datemade', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('EndTime', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
-            $this->datemade = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $this->end_time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ScheduleTableMap::translateFieldName('MentorId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->mentor_id = (null !== $col) ? (int) $col : null;
@@ -856,11 +856,11 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_SCHEDULE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'schedule_id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME)) {
-            $modifiedColumns[':p' . $index++]  = 'time';
+        if ($this->isColumnModified(ScheduleTableMap::COL_START_TIME)) {
+            $modifiedColumns[':p' . $index++]  = 'start_time';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_DATEMADE)) {
-            $modifiedColumns[':p' . $index++]  = 'datemade';
+        if ($this->isColumnModified(ScheduleTableMap::COL_END_TIME)) {
+            $modifiedColumns[':p' . $index++]  = 'end_time';
         }
         if ($this->isColumnModified(ScheduleTableMap::COL_MENTOR_ID)) {
             $modifiedColumns[':p' . $index++]  = 'Mentor_id';
@@ -885,11 +885,11 @@ abstract class Schedule implements ActiveRecordInterface
                     case 'schedule_id':
                         $stmt->bindValue($identifier, $this->schedule_id, PDO::PARAM_INT);
                         break;
-                    case 'time':
-                        $stmt->bindValue($identifier, $this->time ? $this->time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'start_time':
+                        $stmt->bindValue($identifier, $this->start_time ? $this->start_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
-                    case 'datemade':
-                        $stmt->bindValue($identifier, $this->datemade ? $this->datemade->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'end_time':
+                        $stmt->bindValue($identifier, $this->end_time ? $this->end_time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'Mentor_id':
                         $stmt->bindValue($identifier, $this->mentor_id, PDO::PARAM_INT);
@@ -966,10 +966,10 @@ abstract class Schedule implements ActiveRecordInterface
                 return $this->getScheduleId();
                 break;
             case 1:
-                return $this->getTime();
+                return $this->getStartTime();
                 break;
             case 2:
-                return $this->getDatemade();
+                return $this->getEndTime();
                 break;
             case 3:
                 return $this->getMentorId();
@@ -1011,8 +1011,8 @@ abstract class Schedule implements ActiveRecordInterface
         $keys = ScheduleTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getScheduleId(),
-            $keys[1] => $this->getTime(),
-            $keys[2] => $this->getDatemade(),
+            $keys[1] => $this->getStartTime(),
+            $keys[2] => $this->getEndTime(),
             $keys[3] => $this->getMentorId(),
             $keys[4] => $this->getCustomerId(),
             $keys[5] => $this->getRoom(),
@@ -1099,10 +1099,10 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->setScheduleId($value);
                 break;
             case 1:
-                $this->setTime($value);
+                $this->setStartTime($value);
                 break;
             case 2:
-                $this->setDatemade($value);
+                $this->setEndTime($value);
                 break;
             case 3:
                 $this->setMentorId($value);
@@ -1143,10 +1143,10 @@ abstract class Schedule implements ActiveRecordInterface
             $this->setScheduleId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setTime($arr[$keys[1]]);
+            $this->setStartTime($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setDatemade($arr[$keys[2]]);
+            $this->setEndTime($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setMentorId($arr[$keys[3]]);
@@ -1201,11 +1201,11 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_SCHEDULE_ID)) {
             $criteria->add(ScheduleTableMap::COL_SCHEDULE_ID, $this->schedule_id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME)) {
-            $criteria->add(ScheduleTableMap::COL_TIME, $this->time);
+        if ($this->isColumnModified(ScheduleTableMap::COL_START_TIME)) {
+            $criteria->add(ScheduleTableMap::COL_START_TIME, $this->start_time);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_DATEMADE)) {
-            $criteria->add(ScheduleTableMap::COL_DATEMADE, $this->datemade);
+        if ($this->isColumnModified(ScheduleTableMap::COL_END_TIME)) {
+            $criteria->add(ScheduleTableMap::COL_END_TIME, $this->end_time);
         }
         if ($this->isColumnModified(ScheduleTableMap::COL_MENTOR_ID)) {
             $criteria->add(ScheduleTableMap::COL_MENTOR_ID, $this->mentor_id);
@@ -1328,8 +1328,8 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setTime($this->getTime());
-        $copyObj->setDatemade($this->getDatemade());
+        $copyObj->setStartTime($this->getStartTime());
+        $copyObj->setEndTime($this->getEndTime());
         $copyObj->setMentorId($this->getMentorId());
         $copyObj->setCustomerId($this->getCustomerId());
         $copyObj->setRoom($this->getRoom());
@@ -1477,8 +1477,8 @@ abstract class Schedule implements ActiveRecordInterface
             $this->aMentor->removeSchedule($this);
         }
         $this->schedule_id = null;
-        $this->time = null;
-        $this->datemade = null;
+        $this->start_time = null;
+        $this->end_time = null;
         $this->mentor_id = null;
         $this->customer_id = null;
         $this->room = null;
